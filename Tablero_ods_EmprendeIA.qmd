@@ -1,13 +1,13 @@
 ---
 title: "Estudiar No Es Suficiente"
-subtitle: "Pobreza, Educación y Empleo Digno en México · ODS 1, 4 y 8"
-author: "EmprendeIA_ods · HackODS UNAM"
 format:
-  dashboard:
-    theme: [darkly, modern.scss]
-    nav-buttons:
-      - icon: github
-        href: https://github.com/alejandro14-hub/EmprendeIA_ods
+  html:
+    theme: [darkly, landing.scss]
+    toc: false
+    page-layout: full
+    smooth-scroll: true
+    embed-resources: false
+    title-block-style: none
 lang: es
 execute:
   echo: false
@@ -16,6 +16,8 @@ execute:
 ---
 
 ```{python}
+#| output: false
+
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
@@ -23,23 +25,25 @@ import plotly.express as px
 from openpyxl import load_workbook
 from pathlib import Path
 import json
-import statistics
-import pydeck as pdk
+from scipy import stats
 import warnings
 warnings.filterwarnings('ignore')
 
-# Paleta de colores base
-C_POB  = '#3b82f6' # Blue
-C_EDU  = '#10b981' # Teal
-C_EMP  = '#8b5cf6' # Indigo
-C_WARN = '#f43f5e' # Rose
-C_INFO = '#f59e0b' # Amber
+# ── Paleta ──
+C_RED    = '#f43f5e'
+C_BLUE   = '#3b82f6'
+C_GREEN  = '#10b981'
+C_AMBER  = '#f59e0b'
+C_PURPLE = '#8b5cf6'
+C_GRAY   = '#8b949e'
+C_DIM    = '#484f58'
+C_BG     = 'rgba(0,0,0,0)'
 
-D1 = Path('datos/ods1')
-D4 = Path('datos/ods4')
-D8 = Path('datos/ods8')
+D1, D4, D8 = Path('datos/ods1'), Path('datos/ods4'), Path('datos/ods8')
 
-# --- ODS 1: Pobreza ---
+# ══════════════════════════════════════════
+# ODS 1 — CONEVAL (ALL indicators)
+# ══════════════════════════════════════════
 wb = load_workbook(D1 / 'Concentrado_indicadores_de_pobreza_2020.xlsx', read_only=True)
 ws = wb['Concentrado estatal']
 filas = list(ws.iter_rows(max_row=70, values_only=True))
@@ -48,337 +52,686 @@ estados = []
 for r in filas[7:]:
     if r[1] and str(r[1]).strip().isdigit():
         estados.append({
-            'estado':    str(r[2]).strip(),
-            'pct_2020':  float(r[8]) if r[8] else None,
+            'estado':        str(r[2]).strip(),
+            'pobreza':       round(float(r[8]),  2) if r[8]  else None,
+            'extrema':       round(float(r[17]), 2) if r[17] else None,
+            'rezago_edu':    round(float(r[56]), 2) if r[56] else None,
         })
-df_pob = pd.DataFrame(estados).dropna(subset=['pct_2020'])
-df_pob['pct_2020'] = df_pob['pct_2020'].round(2)
+df_pob = pd.DataFrame(estados).dropna()
 
-# --- ODS 4: Educación ---
-wb4 = load_workbook(D4 / 'Educacion_11.xlsx', read_only=True)
+# ══════════════════════════════════════════
+# ODS 4 — Escolaridad promedio y abandono
+# ══════════════════════════════════════════
+wb4 = load_workbook(D4 / 'Educacion_05.xlsx', read_only=True)
 ws4 = wb4.active
-filas4 = list(ws4.iter_rows(max_row=300, values_only=True))
+filas4 = list(ws4.iter_rows(max_row=60, values_only=True))
+
+escol = []
+for r in filas4[7:]:
+    if r[0] and str(r[0]).strip():
+        escol.append({
+            'estado':          str(r[0]).strip(),
+            'escolaridad':     float(r[7]) if r[7] else None,
+        })
+df_esc = pd.DataFrame(escol).dropna()
+
+# Abandono
+wb4b = load_workbook(D4 / 'Educacion_11.xlsx', read_only=True)
+ws4b = wb4b.active
+filas4b = list(ws4b.iter_rows(max_row=300, values_only=True))
 NIVELES = ['Primaria', 'Secundaria', 'Media superior', 'Superior']
 aban = []
-for r in filas4[6:]:
+for r in filas4b[6:]:
     if r[0] and r[1] and str(r[1]).strip() in NIVELES:
-        aban.append({
-            'estado': str(r[0]).strip(), 'nivel': str(r[1]).strip(),
-            'a2024': r[9],
-        })
+        aban.append({'estado': str(r[0]).strip(), 'nivel': str(r[1]).strip(), 'a2024': r[9]})
 df_aban = pd.DataFrame(aban)
 df_aban['a2024'] = pd.to_numeric(df_aban['a2024'], errors='coerce')
-
-# Filtros para Media Superior
-aban_ms = df_aban[(df_aban['nivel']=='Media superior') & (df_aban['estado']!='Estados Unidos Mexicanos')][['estado', 'a2024']].dropna()
-aban_ms.columns = ['estado', 'abandono_ms']
-
-# Métricas Nacionales
 nac_abandono = df_aban[df_aban['estado']=='Estados Unidos Mexicanos'].set_index('nivel')['a2024'].to_dict()
-nac_ms = nac_abandono.get('Media superior', 0)
-nac_pob = df_pob['pct_2020'].mean()
+nac_ms = float(nac_abandono.get('Media superior', 0))
 
-# Ranking Pobreza (Para visualizar Top/Bottom)
-top_bottom_pob = pd.concat([df_pob.nsmallest(5, 'pct_2020'), df_pob.nlargest(5, 'pct_2020')]).sort_values('pct_2020')
-
-# Comparativa Escolar Nacional
-nac_aban_df = df_aban[df_aban['estado']=='Estados Unidos Mexicanos'].dropna(subset=['a2024'])
-nac_aban_df['nivel'] = pd.Categorical(nac_aban_df['nivel'], categories=['Primaria', 'Secundaria', 'Media superior', 'Superior'], ordered=True)
-nac_aban_df = nac_aban_df.sort_values('nivel')
-
-# --- ODS 8: Empleo ---
-df_des = pd.read_csv(D8 / '8.5.2(2)_sh_es.csv', na_values=['NAN', 'ND'])
-DMAP = {
-    'Periodo': 'año',
-    'cvegeo': 'cvegeo',
-    'Entidad_federativa': 'estado',
-    'Sexo|Total_Grupo_de_edad|Total': 'tasa_total',
-}
-df_des = df_des.rename(columns=DMAP)[list(DMAP.values())]
-df_des['estado'] = df_des['estado'].astype(str).str.strip().str.replace('_', ' ')
-
-des_estatal = df_des[(df_des['cvegeo'] != 0) & (df_des['año'] == 2019)][['estado', 'tasa_total']].dropna()
-
-# Integración de datasets para gráfica 3D
-df_3d = df_pob[['estado', 'pct_2020']].merge(aban_ms, on='estado').merge(des_estatal, on='estado')
-
-df_sal = pd.read_csv(D8 / '8.5.1c_sh_es.csv', na_values=['NAN','ND'])
+# ══════════════════════════════════════════
+# ODS 8 — Salarios
+# ══════════════════════════════════════════
+df_sal_raw = pd.read_csv(D8 / '8.5.1c_sh_es.csv', na_values=['NAN','ND'])
 RCOLS = {
     'Periodo': 'año',
     'Sexo|Total_Tipo_de_ocupación|Directores_y_gerentes': 'directivos',
-    'Sexo|Total_Tipo_de_ocupación|Profesionales_científicos_e_intelectuales':'profesionales',
+    'Sexo|Total_Tipo_de_ocupación|Profesionales_científicos_e_intelectuales': 'profesionales',
     'Sexo|Total_Tipo_de_ocupación|Técnicos_y_profesionales_de_nivel_medio': 'tecnicos',
     'Sexo|Total_Tipo_de_ocupación|Trabajadores_de_los_servicios_y_vendedores_de_comercios_y_mercados': 'servicios',
     'Sexo|Total_Tipo_de_ocupación|Ocupaciones_elementales': 'elementales',
     'Sexo|Total_Tipo_de_ocupación|Total': 'total'
 }
-df_sal = df_sal.rename(columns=RCOLS)
+df_sal = df_sal_raw.rename(columns=RCOLS)
 keep = [c for c in RCOLS.values() if c in df_sal.columns]
 df_sal = df_sal[keep].dropna(subset=['total'])
-sal24 = df_sal[df_sal['año']==2024].iloc[0]
+sal24 = df_sal[df_sal['año'] == 2024].iloc[0]
 
+# ══════════════════════════════════════════
+# MERGE & STATS
+# ══════════════════════════════════════════
+# Both CONEVAL and INEGI Education use identical state names — direct merge
+df_esc_states = df_esc[df_esc['estado'] != 'Estados Unidos Mexicanos'].copy()
+df_m = df_pob.merge(df_esc_states, on='estado')
 
-# --- MAPA PLOTLY PREP ---
+# Correlations
+r_ext, p_ext = stats.pearsonr(df_m['extrema'], df_m['escolaridad'])
+r_rez, p_rez = stats.pearsonr(df_m['rezago_edu'], df_m['escolaridad'])
+r_pob, p_pob = stats.pearsonr(df_m['pobreza'], df_m['escolaridad'])
+
+# Key stats
+nac_pob = df_pob['pobreza'].mean()
+pob_chiapas = df_pob[df_pob['estado']=='Chiapas']['pobreza'].values[0]
+ext_chiapas = df_pob[df_pob['estado']=='Chiapas']['extrema'].values[0]
+rez_chiapas = df_pob[df_pob['estado']=='Chiapas']['rezago_edu'].values[0]
+esc_chiapas = df_m[df_m['estado']=='Chiapas']['escolaridad'].values[0]
+esc_nl = df_m[df_m['estado']=='Nuevo León']['escolaridad'].values[0]
+brecha_anos = round(esc_nl - esc_chiapas, 2)
+sal_elem = round(sal24['elementales'], 2)
+sal_dir = round(sal24['directivos'], 2)
+sal_prof = round(sal24['profesionales'], 2)
+brecha_x = round(sal_dir / sal_elem, 1)
+
+# ══════════════════════════════════════════
+# GEO DATA
+# ══════════════════════════════════════════
 with open('datos/geo/mexico_estados.json', encoding='utf-8') as f:
     geo = json.load(f)
 
-EQUIV = {'Coahuila de Zaragoza':'Coahuila', 'Michoacán de Ocampo':'Michoacán', 'Veracruz de Ignacio de la Llave':'Veracruz'}
-df_map = df_pob.copy()
-df_map['nombre_geo'] = df_map['estado'].map(lambda x: EQUIV.get(x, x))
+EQUIV_GEO = {'Coahuila de Zaragoza':'Coahuila', 'Michoacán de Ocampo':'Michoacán',
+             'Veracruz de Ignacio de la Llave':'Veracruz'}
+df_pob['nombre_geo'] = df_pob['estado'].map(lambda x: EQUIV_GEO.get(x, x))
 
-def pre_format(fig):
+# ══════════════════════════════════════════
+# CHART STYLING
+# ══════════════════════════════════════════
+def style(fig, h=500):
     fig.update_layout(
-        template="plotly_dark", 
-        paper_bgcolor="rgba(0,0,0,0)", 
-        plot_bgcolor="rgba(0,0,0,0)",
-        margin=dict(t=30, b=40, l=10, r=40),
-        font=dict(family="Inter, sans-serif", size=13, color="#8b949e")
+        template='plotly_dark',
+        paper_bgcolor=C_BG, plot_bgcolor=C_BG,
+        margin=dict(t=20, b=40, l=50, r=30),
+        font=dict(family='Inter, sans-serif', size=13, color=C_GRAY),
+        height=h,
     )
-    if fig.layout.xaxis:
-        fig.update_xaxes(showgrid=False, zeroline=False, linecolor="#30363d")
-    if fig.layout.yaxis:
-        fig.update_yaxes(showgrid=False, zeroline=False, linecolor="#30363d")
+    fig.update_xaxes(showgrid=False, zeroline=False, linecolor='#30363d')
+    fig.update_yaxes(showgrid=False, zeroline=False, linecolor='#30363d')
     return fig
-```
 
-# Inicio {orientation="columns"}
-
-## Columna 1 {width=30%}
-### La Fábula de la Meritocracia
-
-**Estudiar no es suficiente cuando el suelo está roto.**
-
-A lo largo de nuestras vidas escuchamos un mantra constante: *"Si te esfuerzas y vas a la escuela, saldrás de la pobreza"*. Se asume que el fracaso académico y laboral es producto exclusivo del individuo.
-
-Este tablero de periodismo de datos desmiente estadísticamente esa premisa. Usaremos datos masivos del **CONEVAL**, la **SEP** y el **INEGI** para visibilizar que el abandono escolar no es una falta de capacidad intelectual, sino una expulsión sistémica causada por las asfixiantes barreras de la pobreza.
-
-**Objetivos del Proyecto :** Probar matemáticamente que la Pobreza **(ODS 1)** detona el Abandono en Media Superior **(ODS 4)**, lo que a su vez condena a los jóvenes a empleos sin dignidad **(ODS 8)**.
-
-*Usa las pestañas superiores para navegar por los 3 Actos de nuestra investigación.*
-
-## Columna 2 - Valueboxes {width=70%}
-```{python}
-#| content: valuebox
-#| title: "Muro Estructural: Promedio de Pobreza Nacional (ODS 1)"
-#| icon: cash-stack
-#| color: danger
-dict(
-  value = f"{nac_pob:.1f}%",
-)
-```
-
-```{python}
-#| content: valuebox
-#| title: "Punto de Quiebre: Tasa Media Nacional de Abandono en Prepa (ODS 4)"
-#| icon: book
-#| color: warning
-dict(
-  value = f"{float(nac_ms):.1f}%",
-)
-```
-
-```{python}
-#| content: valuebox
-#| title: "Condena Laboral: Sueldo Ocupaciones Elementales (MXN/hr) (ODS 8)"
-#| icon: cone-striped
-#| color: secondary
-dict(
-  value = "$59",
-)
-```
-
-# Fase I: Topografía (ODS 1) 
-
-## Panel Narrativo {.sidebar width=30%}
-
-### El relato de un sistema roto.
-*"Estudiar prometió ser el puente hacia un futuro distinto, pero para millones de mexicanos ese puente lo construyeron sobre un abismo económico."*
-
-### ODS 1: Fin de la Pobreza - La Lotería del Código Postal
-
-Detrás de las cifras formales del **ODS 1** se esconde una fractura estructural. En México, la pobreza extrema no es una condición temporal por falta de esfuerzo; es una herida casi hereditaria dictada por la geografía. 
-
-El objetivo primordial de las Naciones Unidas es *poner fin a la pobreza en todas sus formas*, pero nuestro análisis cruzado demuestra que los estados enteros en el sur y el centro actúan como anclas socioeconómicas irrenunciables. 
-
-**La Pobreza es la Primera Ficha del Dominó**
-Al interactuar con el mapa térmico de la derecha, estarás identificando el mayor obstáculo contra la educación de calidad. Esta vulnerabilidad de base (ODS 1) es el motor silencioso que fuerza a la juventud a abandonar su futuro académico simplemente para evitar el hambre.
-
-**Navega a la siguiente página (en la barra superior) para ver la Fase II.**
-
-
-## Columna Gráfica {width=70%}
-
-```{python}
-#| title: "La barrera inicial de la Pobreza en México"
+# ── FIG 1: Mapa coroplético ──
 fig_map = px.choropleth(
-    df_map,
-    geojson=geo,
-    color="pct_2020",
-    locations="nombre_geo",
-    featureidkey="properties.name",
-    color_continuous_scale="Reds",
-    labels={'pct_2020':'Pobreza %'}
+    df_pob, geojson=geo, color='pobreza', locations='nombre_geo',
+    featureidkey='properties.name', color_continuous_scale='Reds',
+    labels={'pobreza': 'Pobreza %'},
+    hover_data={'nombre_geo': True, 'pobreza': ':.1f', 'extrema': ':.1f', 'rezago_edu': ':.1f'}
 )
-_ = fig_map.update_geos(fitbounds="locations", visible=False, bgcolor='rgba(0,0,0,0)')
-_ = fig_map.update_layout(
-    margin={"r":0,"t":0,"l":0,"b":0},
-    paper_bgcolor="rgba(0,0,0,0)",
-    plot_bgcolor="rgba(0,0,0,0)",
-    template="plotly_dark",
-    font=dict(family="Inter, sans-serif", size=13, color="#8b949e")
+fig_map.update_geos(fitbounds='locations', visible=False, bgcolor=C_BG)
+fig_map.update_layout(
+    paper_bgcolor=C_BG, plot_bgcolor=C_BG, template='plotly_dark',
+    margin=dict(r=0, t=0, l=0, b=0), height=500,
+    font=dict(family='Inter, sans-serif', size=13, color=C_GRAY),
+    coloraxis_colorbar=dict(title='Pobreza %', thickness=20, len=0.65, tickfont=dict(size=12))
 )
+
+# ── FIG 2: Top/Bottom barras pobreza ──
+top5 = df_pob.nlargest(5, 'pobreza').sort_values('pobreza')
+bot5 = df_pob.nsmallest(5, 'pobreza').sort_values('pobreza')
+tb = pd.concat([bot5, top5])
+colores_tb = [C_GREEN]*5 + [C_RED]*5
+
+fig_bars = go.Figure(go.Bar(
+    x=tb['pobreza'], y=tb['estado'], orientation='h',
+    marker_color=colores_tb,
+    text=[f'{v:.1f}%' for v in tb['pobreza']],
+    textposition='outside', textfont=dict(color='#c9d1d9', size=12),
+))
+style(fig_bars, h=420)
+fig_bars.update_layout(xaxis_title='Pobreza %', yaxis_title='',
+                       margin=dict(t=10, b=30, l=10, r=60))
+
+# ── FIG 3: Scatter pobreza extrema vs escolaridad ──
+fig_scatter = px.scatter(
+    df_m, x='extrema', y='escolaridad',
+    color='extrema', hover_name='estado',
+    trendline='ols',
+    color_continuous_scale=[[0, C_GREEN], [0.4, C_AMBER], [0.7, C_RED], [1, '#7f1d1d']],
+    labels={'extrema': 'Pobreza Extrema %', 'escolaridad': 'Años de Escolaridad'},
+)
+fig_scatter.update_traces(
+    marker=dict(size=14, line=dict(width=1, color='rgba(255,255,255,0.3)')),
+    selector=dict(mode='markers'),
+)
+# Trendline styling
+fig_scatter.update_traces(
+    line=dict(color='rgba(59,130,246,0.5)', width=2, dash='dash'),
+    selector=dict(mode='lines'),
+)
+style(fig_scatter, h=520)
+fig_scatter.update_layout(
+    xaxis_title='Pobreza Extrema (%) — ODS 1',
+    yaxis_title='Escolaridad Promedio (años) — ODS 4',
+    coloraxis_colorbar=dict(title='Pobreza<br>Extrema %', thickness=12, len=0.4),
+    margin=dict(t=20, b=50, l=60, r=30),
+)
+
+# Annotate key states
+for label_estado, anchor in [('Chiapas','top center'), ('Nuevo León','bottom center'),
+                              ('Oaxaca','top right'), ('Guerrero','top left')]:
+    row = df_m[df_m['estado'] == label_estado]
+    if not row.empty:
+        fig_scatter.add_annotation(
+            x=row['extrema'].values[0], y=row['escolaridad'].values[0],
+            text=label_estado, showarrow=False, yshift=18,
+            font=dict(size=11, color='#f0f6fc'), xanchor='center',
+        )
+
+# ── FIG 4: Barras salario por ocupación ──
+LABS = {'directivos':'Directivos', 'profesionales':'Profesionistas',
+        'tecnicos':'Técnicos', 'servicios':'Servicios', 'elementales':'Elementales'}
+sal_d = {LABS[k]: round(sal24[k], 2) for k in LABS if k in sal24.index}
+sal_df = pd.DataFrame(list(sal_d.items()), columns=['ocupacion','salario']).sort_values('salario')
+
+bar_colors = [C_RED if s < 50 else C_AMBER if s < 80 else C_BLUE for s in sal_df['salario']]
+
+fig_salary = go.Figure(go.Bar(
+    x=sal_df['salario'], y=sal_df['ocupacion'], orientation='h',
+    marker_color=bar_colors,
+    text=[f'${s:.0f}/hr' for s in sal_df['salario']],
+    textposition='outside', textfont=dict(color='#c9d1d9', size=13),
+))
+style(fig_salary, h=380)
+fig_salary.update_layout(
+    xaxis_title='Ingreso por hora trabajada (MXN, 2024)',
+    margin=dict(t=10, b=40, l=10, r=70),
+)
+
+# ── FIG 5: Abandono por nivel (contexto) ──
+nac_aban_df = df_aban[df_aban['estado']=='Estados Unidos Mexicanos'].dropna(subset=['a2024']).copy()
+nac_aban_df['nivel'] = pd.Categorical(nac_aban_df['nivel'], categories=NIVELES, ordered=True)
+nac_aban_df = nac_aban_df.sort_values('nivel')
+
+colores_niv = [C_DIM if n != 'Media superior' else C_AMBER for n in nac_aban_df['nivel']]
+fig_dropout = go.Figure(go.Bar(
+    x=nac_aban_df['nivel'], y=nac_aban_df['a2024'],
+    marker_color=colores_niv,
+    text=[f'{float(v):.1f}%' for v in nac_aban_df['a2024']],
+    textposition='auto', textfont=dict(color='white', size=14),
+))
+style(fig_dropout, h=350)
+fig_dropout.update_layout(yaxis_title='Tasa de Abandono Nacional %',
+                          margin=dict(t=10, b=10, l=10, r=10))
+```
+
+<!-- ═══════════════════════════════════════ -->
+<!-- HERO                                    -->
+<!-- ═══════════════════════════════════════ -->
+
+::::{.hero #s-hero}
+:::{.hero-label .fade-in}
+HackODS UNAM 2026 · EmprendeIA
+:::
+
+<h1 class="blur-in d1" style="font-size:clamp(3rem,7vw,6rem); font-weight:700; color:#f0f6fc; line-height:1.05; letter-spacing:-0.03em; margin:0 0 1.5rem 0;">Estudiar <span class="accent">No Es Suficiente.</span></h1>
+
+:::{.hero-sub .fade-in .d2}
+La historia de 25.1 millones de mexicanos que el sistema expulsó. Un recorrido por los datos que desmienten el mito de la meritocracia.
+:::
+
+:::{.hero-tags .fade-in .d3}
+[ODS 1 · Sin Pobreza]{.hero-tag}
+[ODS 4 · Educación de Calidad]{.hero-tag}
+[ODS 8 · Trabajo Decente]{.hero-tag}
+:::
+
+<div class="scroll-hint"></div>
+::::
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SECTION 1: EL MANTRA                    -->
+<!-- ═══════════════════════════════════════ -->
+
+::::{.landing-section #s-mantra}
+:::{.section-inner}
+
+:::{.section-title .fade-in}
+Todos conocemos a un Luis.
+:::
+
+:::{.section-body .fade-in .d1}
+Es el primo que se fue a trabajar a los 16. El vecino que vende en el tianguis desde que tienes memoria. El compañero de secundaria que un día dejó de llegar. Tu mamá te decía: *"Estudia, para que no termines como..."* y ahí insertaba el nombre de alguien que conocías.
+
+La promesa siempre fue la misma: **si te esfuerzas y estudias, sales adelante.** Este tablero es la autopsia estadística de esa promesa.
+:::
+
+:::{.stat-cards .fade-in .d2}
+
+:::{.stat-card}
+
+```{python}
+#| output: asis
+print(f'<div class="stat-value red" data-count="{pob_chiapas:.1f}" data-suf="%">0</div>')
+print('<div class="stat-desc">Pobreza en Chiapas — el estado donde nació Luis</div>')
+```
+
+:::
+
+:::{.stat-card}
+
+```{python}
+#| output: asis
+print('<div class="stat-value amber" data-count="25.1" data-suf="M">0</div>')
+print('<div class="stat-desc">Mexicanos con rezago educativo — CONEVAL 2022</div>')
+```
+
+:::
+
+:::{.stat-card}
+
+```{python}
+#| output: asis
+print(f'<div class="stat-value blue" data-count="{sal_elem:.0f}" data-pre="$" data-suf="/hr">0</div>')
+print('<div class="stat-desc">Salario en ocupaciones elementales — INEGI 2024</div>')
+```
+
+:::
+:::
+
+:::{.section-quote .fade-in .d3}
+"Spoiler: Luis no fracasó. El sistema lo expulsó."
+:::
+
+:::
+::::
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SECTION 2: ACTO I — EL MAPA            -->
+<!-- ═══════════════════════════════════════ -->
+
+::::{.landing-section .alt-bg #s-acto1}
+:::{.section-inner}
+
+:::{.act-label .fade-in}
+Acto I · ODS 1
+:::
+
+:::{.section-title .fade-in .d1}
+Donde naciste ya decidió tu futuro.
+:::
+
+:::{.section-body .fade-in .d2}
+Luis nació en Chiapas. No eligió nacer ahí. Nadie elige. Pero ese dato — su código postal — ya cargó los dados en su contra antes de que aprendiera a leer.
+:::
+
+:::{.chart-full .chart-reveal .d2}
+
+```{python}
 fig_map
 ```
 
+:::
+
+:::{.split}
+
+:::{.section-body .slide-left .d2}
+En Chiapas, **3 de cada 10 personas** nunca completaron la educación que les correspondía. El CONEVAL lo mide y le pone un nombre técnico: **"rezago educativo"**.
+
+En 2020, 24.4 millones de mexicanos lo padecían. Para 2022, la cifra subió a **25.1 millones**. No está bajando. Está creciendo.
+
+Pero Luis tiene 6 años, y su mamá lo inscribió en la primaria. Todavía hay esperanza. *¿Verdad?*
+:::
+
+:::{.slide-right .d3}
 ```{python}
-#| title: "Extremos Nacionales: 5 Estados más Pobres vs 5 más Ricos (2020)"
-colores = [C_EDU]*5 + [C_WARN]*5
-fig_pob = go.Figure(go.Bar(
-    x=top_bottom_pob['pct_2020'], 
-    y=top_bottom_pob['estado'],
-    orientation='h',
-    marker_color=colores,
-    text=[f"{float(x):.1f}%" for x in top_bottom_pob['pct_2020']],
-    textposition='outside',
-    textfont=dict(color='white')
-))
-fig_pob = pre_format(fig_pob)
-_ = fig_pob.update_layout(xaxis_title="% Pobreza", yaxis_title="", margin=dict(t=50, b=20, l=10, r=30))
-fig_pob
+fig_bars
+```
+:::
+
+:::
+
+:::
+::::
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SECTION 3: LA BRECHA (stat interlude)   -->
+<!-- ═══════════════════════════════════════ -->
+
+::::{.landing-section #s-brecha}
+:::{.section-inner style="text-align:center;"}
+
+:::{.blur-in}
+
+```{python}
+#| output: asis
+print(f'<div class="stat-huge red" data-count="{brecha_anos}">0</div>')
+print('<div class="stat-label" style="font-size:1.3rem;">años de escolaridad separan al estado más pobre del más rico.</div>')
+print(f'<div class="stat-source" style="margin-top:1rem;">Chiapas: {esc_chiapas} años &nbsp;·&nbsp; Nuevo León: {esc_nl} años &nbsp;—&nbsp; INEGI, Censo 2020</div>')
 ```
 
+:::
 
-# Fase II: Puente Roto (ODS 4)
-
-## Panel Narrativo {.sidebar width=30%}
-
-### ODS 4: Educación de Calidad - La Expulsión Temprana
-
-El **ODS 4** busca explícitamente *garantizar una educación inclusiva, equitativa y promover oportunidades*. Pero la fría historia que emerge de los datos indica que la escuela está perdiendo su batalla directa contra el hambre.
-
-**El Choque entre el Salón y el Estómago**
-Explora nuestra Gráfica de Burbujas cruzadas. En el momento en que combinamos la Pobreza (Eje X) con el Abandono (Eje Y), descubrimos una correlación letal insalvable. Los jóvenes inscritos en el nivel Medio Superior (Preparatoria) no desertan por desinterés o falta de capacidad.
-
-En los estados con carencias críticas, la presión económica aplasta a los estudiantes empujándolos fuera de la prepa sistemáticamente. Abandonan sus estudios para convertirse en fuerza de trabajo de emergencia precaria ante los estragos del **ODS 1** en sus hogares. El fracaso escolar en México no es una crisis estrictamente académica, es una asfixia económica que obliga al sistema a desechar su mejor talento.
-
-
-## Columna Gráfica {width=70%}
+:::{.corr-badge .fade-in .d1 style="display:inline-flex; margin-top:2rem;"}
 
 ```{python}
-#| title: "Gráfica interactiva: Impacto combinado de Pobreza, Abandono Escolar y Desocupación"
+#| output: asis
+print(f'<span class="corr-r">r = {r_ext:.2f}</span>')
+print(f'<span class="corr-desc">Correlación pobreza extrema vs escolaridad (p < 0.001, n=32 estados)</span>')
+```
 
-fig_scatter = px.scatter(
-    df_3d,
-    x='pct_2020', y='abandono_ms', size='tasa_total',
-    color='pct_2020', hover_name='estado',
-    hover_data={'pct_2020':':.1f','abandono_ms':':.1f','tasa_total':':.1f'},
-    labels={'pct_2020':'Pobreza (ODS 1) %','abandono_ms':'Abandono Prepa (ODS 4) %','tasa_total':'Desocupación (ODS 8) %'},
-    color_continuous_scale=[[0.0,'#10b981'],[0.3,'#f59e0b'],[0.6,'#f43f5e'],[1.0,'#7f1d1d']],
-    size_max=35
-)
+:::
 
-_ = fig_scatter.update_traces(
-    marker=dict(line=dict(width=1, color='rgba(255,255,255,0.4)')),
-    hovertemplate='<b>%{hovertext}</b><br>Pobreza: %{x:.1f}%<br>Abandono prepa: %{y:.1f}%<br>Desocupación: %{marker.size:.1f}%<extra></extra>'
-)
+:::
+::::
 
-fig_scatter = pre_format(fig_scatter)
-_ = fig_scatter.update_layout(
-    height=550, 
-    margin=dict(l=0, r=0, b=50, t=50),
-    xaxis_title="ODS 1: Pobreza %",
-    yaxis_title="ODS 4: Abandono Medio Superior %"
-)
+<!-- ═══════════════════════════════════════ -->
+<!-- SECTION 4: ACTO II — EL PUENTE ROTO    -->
+<!-- ═══════════════════════════════════════ -->
+
+::::{.landing-section .alt-bg #s-acto2}
+:::{.section-inner}
+
+:::{.act-label .amber .fade-in}
+Acto II · ODS 4
+:::
+
+:::{.section-title .fade-in .d1}
+El puente que se rompe a mitad del camino.
+:::
+
+:::{.split}
+
+:::{.section-body .slide-left .d2}
+Luis llegó a la secundaria. Muchos de sus amigos no.
+
+UNICEF reporta que en México, **solo 56 de cada 100 niños** que entran a primaria logran terminar la preparatoria. Los otros 44 se quedan en el camino. No se pierden — los expulsa el hambre.
+
+La prepa cuesta. No la colegiatura — cuesta el **tiempo**. Cuesta las 4 horas de camión. Cuesta el plato de comida que su mamá no tiene si él no trabaja.
+
+Un día, Luis deja de ir. No es que no le guste estudiar. Es que **su familia necesita que deje de hacerlo.**
+:::
+
+:::{.slide-right .d3}
+```{python}
+fig_dropout
+```
+:::
+
+:::
+
+:::
+::::
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SECTION 4b: STAT INTERLUDE — 56 de 100  -->
+<!-- ═══════════════════════════════════════ -->
+
+::::{.landing-section #s-56}
+:::{.section-inner style="text-align:center;"}
+
+:::{.blur-in}
+<div class="stat-huge amber"><span data-count="56">0</span> de 100</div>
+<div class="stat-label" style="font-size:1.3rem;">niños que entran a primaria terminan la preparatoria.</div>
+<div class="stat-source" style="margin-top:1rem;">UNICEF, Country Office Annual Report México 2023</div>
+:::
+
+:::
+::::
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SECTION 4c: SCATTER (P3 FIX: own section) -->
+<!-- ═══════════════════════════════════════ -->
+
+::::{.landing-section .alt-bg #s-scatter}
+:::{.section-inner}
+
+:::{.section-body .fade-in style="max-width:700px;"}
+El CONEVAL documenta que el **36.7%** de los mexicanos mayores de 22 años no completaron la preparatoria. Luis acaba de unirse a esa estadística. Cuando cruzamos pobreza extrema con escolaridad en los 32 estados, aparece una línea casi recta:
+:::
+
+:::{.chart-full .chart-reveal .d1}
+
+```{python}
 fig_scatter
 ```
 
-```{python}
-#| title: "Justificación Metodológica: ¿Por qué medir solo nivel Medio Superior?"
+:::
 
-# Crear arreglo de colores: resaltar 'Media superior' en rojo, el resto sutil.
-colores_aban = [C_WARN if nivel == 'Media superior' else '#374151' for nivel in nac_aban_df['nivel']]
-
-fig_aban = go.Figure(go.Bar(
-    x=nac_aban_df['nivel'], 
-    y=nac_aban_df['a2024'],
-    marker_color=colores_aban,
-    marker_line_width=0,
-    text=[f"{float(val):.1f}%" for val in nac_aban_df['a2024']],
-    textposition='auto',
-    textfont=dict(color='white', size=14)
-))
-
-fig_aban = pre_format(fig_aban)
-_ = fig_aban.update_layout(
-    yaxis_title="Tasa de Abandono Nacional", 
-    margin=dict(t=50, b=20, l=10, r=10),
-    showlegend=False
-)
-fig_aban
-```
-
-
-# Fase III: Condena Laboral (ODS 8)
-
-## Panel Narrativo {.sidebar width=30%}
-
-### ODS 8: Trabajo Decente - La Condena de la Precarización
-
-El **ODS 8** persigue *promover el crecimiento económico sostenido y lograr el trabajo decente*. La meta es blindar el desarrollo, pero el destino final para la multitud que cae por el abismo de la deserción escolar está completamente sellado hacia la miseria laboral.
-
-**El Mercado del Desespero Urbano**
-Cuando un joven es forzado fuera del salón de clases por la emergencia salarial en casa, sufre privación del crecimiento técnico (fracaso forzado del ODS 4 impulsado por el ODS 1). Acto seguido ingresa al mercado sin ninguna de las certificaciones o preparación competitivas. 
-
-**Explotación por Necesidad**
-Consecuencia directa: el sistema los absorbe en la base de la informalidad, lo que la estadística clasifica como "Ocupaciones Elementales". Observa la brecha monumental en el gráfico adyacente: un ex-alumno forzado gana $59 pesos nominales; el tercio estricto de cualquier profesionista graduado. Una trampa sistémica y matemática de la cual apenas una minúscula fracción de individuos logrará escapar antes de envejecer con problemas graves de salud, reiniciando así el ciclo del ODS 1 para su propia descendencia.
-
-## Columna Gráfica {width=70%}
+:::{.corr-badge .fade-in .d2}
 
 ```{python}
-#| title: "El Destino Final: Renta Nacional por Hora Trabajada (MXN - Año 2024)"
-LABS = {'directivos':'Directivos', 'profesionales':'Profesionales', 'tecnicos':'Técnicos', 'servicios':'Servicios', 'elementales':'Operativos/Elementales'}
-sal_d = {LABS[k]: sal24[k] for k in LABS if k in sal24.index}
-sal_df = pd.DataFrame(list(sal_d.items()), columns=['ocupacion', 'salario']).sort_values('salario')
-
-cmars = [C_EMP if i < 2 else C_POB if i < 4 else C_EDU for i in range(len(sal_df))]
-fig5 = go.Figure(go.Bar(
-    x=sal_df.salario, 
-    y=sal_df.ocupacion, 
-    orientation='h', 
-    marker_color=cmars, 
-    text=[f"${int(s)} / hr" for s in sal_df.salario], 
-    textposition='outside'
-))
-
-fig5 = pre_format(fig5)
-_ = fig5.update_layout(height=700, xaxis_title="Ingreso Promedio por Hora Trabajada (MXN)", margin=dict(t=50, b=20, l=10, r=50))
-fig5
+#| output: asis
+print(f'<span class="corr-r">r = {r_ext:.2f}</span>')
+print('<span class="corr-desc">A mayor pobreza extrema, menor escolaridad promedio — 32 estados, p < 0.001</span>')
 ```
 
-# Conclusión: El Ciclo de los ODS
+:::
 
-## Panel Narrativo {.sidebar width=30%}
+:::{.section-body .fade-in .d3 style="margin-top:1.5rem; max-width:700px;"}
+La OCDE, en su evaluación de México de febrero 2026, lo dice sin rodeos: la informalidad del **56%** del país está directamente ligada a que los jóvenes no terminan su educación. Pero la recomendación llega tarde para Luis.
+:::
 
-### El Destino no es Accidental
-La historia que trazamos está cimentada enteramente en los **Objetivos de Desarrollo Sostenible**. No es una coincidencia, es un ciclo destructivo que se auto-retroalimenta. Nuestro tablero de Datos demuestra que este recorrido está interconectado.
+:::
+::::
 
-### Nuestro Llamado
-Romper el problema exige atacarlo desde la raíz. Proveer "Educación de Calidad" o exigir "Trabajo Decente" es matemáticamente imposible si no destruimos primero la "Pobreza Estructural" y nivelamos la cancha. 
+<!-- ═══════════════════════════════════════ -->
+<!-- SECTION 6: ACTO III — LA CONDENA       -->
+<!-- ═══════════════════════════════════════ -->
 
-Esto es **Estudiar No Es Suficiente**: *Periodismo de Datos contra el mito de la Meritocracia.*
+::::{.landing-section .alt-bg #s-acto3}
+:::{.section-inner}
 
+:::{.act-label .purple .fade-in}
+Acto III · ODS 8
+:::
 
-## Todo el ciclo es sistémico {width=70%}
+:::{.section-title .fade-in .d1}
+Bienvenido al piso de abajo.
+:::
 
-### Resumen de la Investigación
+:::{.split}
 
-A través de las tres fases anteriores, hemos validado estadísticamente cómo los ODS se encadenan para forzar un destino:
+:::{.section-body .slide-left .d2}
 
-1. **ODS 1 (Fin de la Pobreza - Trampa de Inicio):** 
-   Todo nace de la desigualdad demostrada en nuestra **Fase I**. Los altos porcentajes de vulnerabilidad en estados marginados levantan un abismo económico. La pobreza no es mala suerte; es un muro geográfico al que los jóvenes se enfrentan desde su nacimiento.
-   <br><br>
-2. **ODS 4 (Educación de Calidad - Expulsión Temprana):** 
-   Ese abismo de pobreza provoca de manera infalible la deserción demostrada en la **Fase II**. Como evidenciamos en el *Bubble Chart*, el Abandono Escolar asciende violentamente allí donde sube la precariedad y hay baja ocupación. Los estudiantes no fracasan por falta de mérito, huyen para sobrevivir, expulsados por el sistema, cortando su educación en Media Superior.
-   <br><br>
-3. **ODS 8 (Trabajo Decente - Condena Final):** 
-   El ciclo termina de cerrarse en la **Fase III**, la condena de nuestra juventud. Al ser privados del escudo del ODS 4, ingresan precipitadamente a un mercado laboral que sólo les ofrece salarios raquíticos de *ocupaciones elementales*. Generando apenas un tercio del ingreso al que accederían como profesionistas, quedan sumergidos por décadas en la informalidad, lo que a su vez predetermina que la próxima generación nazca nuevamente bajo las cadenas del ODS 1.
+```{python}
+#| output: asis
+print(f'<div class="stat-huge red" style="font-size:5rem;" data-count="{sal_elem:.0f}" data-pre="$">0</div>')
+print('<div class="stat-label">pesos por hora. Ese es el precio de no tener preparatoria.</div>')
+```
+
+Luis tiene 18 años, secundaria terminada, y necesita comer. El mercado laboral mexicano tiene un piso reservado para él: **ocupaciones elementales** — limpieza, carga, trabajo manual sin especialización.
+
+Arriba de Luis, los profesionistas ganan **$109/hr**. Los directivos, **$117/hr**. Luis tendría que trabajar **3 horas** para ganar lo que un directivo gana en una.
+:::
+
+:::{.slide-right .d3}
+```{python}
+fig_salary
+```
+:::
+
+:::
+
+:::{.section-body .fade-in .d3 style="margin-top:2rem;"}
+Entre 2016 y 2024, la brecha salarial absoluta entre directivos y trabajadores elementales creció de $57 a **$83 pesos por hora**. El piso no se está acercando al techo. **Se está alejando.**
+
+Y aquí viene lo peor: con $40 la hora, Luis no puede pagar la renta, la comida, y además ahorrar para que su hija vaya a la escuela. **El ciclo se reinicia.**
+:::
+
+:::
+::::
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SECTION 8: EL CICLO (P6 FIX: merged 3.0x) -->
+<!-- ═══════════════════════════════════════ -->
+
+::::{.landing-section .alt-bg #s-ciclo}
+:::{.section-inner style="text-align:center;"}
+
+:::{.blur-in}
+
+```{python}
+#| output: asis
+print(f'<div class="stat-huge blue" data-count="{brecha_x}" data-suf="x">0</div>')
+print(f'<div class="stat-label" style="font-size:1.3rem;">Un directivo gana {brecha_x} veces más que un trabajador elemental por hora.</div>')
+print(f'<div class="stat-source" style="margin-top:1rem;">${sal_dir:.0f}/hr vs ${sal_elem:.0f}/hr &nbsp;—&nbsp; INEGI, ENOE 2024</div>')
+```
+
+:::
+
+:::{.section-title .fade-in .d1 style="margin-top:4rem;"}
+No es Luis. Es el sistema.
+:::
+
+:::{.section-body .fade-in .d2 style="max-width:700px; margin:0 auto 3rem;"}
+Cuando corremos los datos de los 32 estados mexicanos, tres verdades emergen con fuerza matemática. La pobreza, la educación truncada y el empleo precario no son fenómenos aislados — son **engranajes de un mismo ciclo** que se auto-alimenta.
+:::
+
+:::{.cycle-diagram .fade-in .d2}
+
+:::{.cycle-node .ods1}
+<div class="cycle-ods">ODS 1</div>
+<div class="cycle-name">Pobreza</div>
+<div class="cycle-stat">r = −0.82</div>
+:::
+
+<div class="cycle-arrow">→</div>
+
+:::{.cycle-node .ods4}
+<div class="cycle-ods">ODS 4</div>
+<div class="cycle-name">Educación truncada</div>
+
+```{python}
+#| output: asis
+print(f'<div class="cycle-stat">{brecha_anos} años menos</div>')
+```
+
+:::
+
+<div class="cycle-arrow">→</div>
+
+:::{.cycle-node .ods8}
+<div class="cycle-ods">ODS 8</div>
+<div class="cycle-name">Empleo precario</div>
+
+```{python}
+#| output: asis
+print(f'<div class="cycle-stat">${sal_elem:.0f} vs ${sal_dir:.0f}/hr</div>')
+```
+
+:::
+
+<div class="cycle-arrow" style="margin-top:1rem;">↩ el ciclo se repite</div>
+
+:::
+
+:::{.section-quote .blue .fade-in .d3 style="max-width:700px; margin:3rem auto 0; text-align:left;"}
+"Decirle a Luis *'estudia más'* es como decirle a alguien que se ahoga *'nada mejor'*. El problema no es Luis. El problema es el agua. Romper el ciclo exige atacar la raíz: mientras la pobreza estructural no se destruya, la educación seguirá siendo un privilegio y el trabajo digno una fantasía."
+:::
+
+:::
+::::
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SOURCES & FOOTER                        -->
+<!-- ═══════════════════════════════════════ -->
+
+::::{.sources-section}
+
+### Fuentes
+
+:::{.source-item}
+**CONEVAL** — Medición Multidimensional de la Pobreza en México 2020 y 2022. [coneval.org.mx/Medicion](https://www.coneval.org.mx/Medicion/MP/Documents/MMP_2022/Pobreza_multidimensional_2022.pdf)
+:::
+
+:::{.source-item}
+**INEGI** — Encuesta Nacional de Ocupación y Empleo (ENOE), Ingreso por hora por ocupación 2024. [inegi.org.mx/programas/enoe](https://www.inegi.org.mx/contenidos/saladeprensa/boletines/2025/enoe/enoe2025_11.pdf)
+:::
+
+:::{.source-item}
+**INEGI** — Grado Promedio de Escolaridad por Entidad Federativa, Censo 2020. [inegi.org.mx](https://www.inegi.org.mx)
+:::
+
+:::{.source-item}
+**SEP / INEGI** — Tasa de Abandono Escolar por Nivel Educativo 2024. [sep.gob.mx](https://www.sep.gob.mx)
+:::
+
+:::{.source-item}
+**OCDE** — Economic Survey México 2026: informalidad laboral al 56%. [oecd.org](https://www.oecd.org/en/about/news/press-releases/2026/02/boosting-digitalisation-and-improving-education-outcomes-would-accelerate-growth-and-raise-living-standards-in-mexico.html)
+:::
+
+:::{.source-item}
+**UNICEF** — Country Office Annual Report México 2023: solo 56 de 100 niños completan Media Superior. [unicef.org](https://www.unicef.org/media/152426/file/Mexico-2023-COAR.pdf)
+:::
+
+:::{.source-item}
+**El Colegio Mexiquense** — "Distribución espacial de la pobreza y rezago educativo en México". *Economía, Sociedad y Territorio*. [est.cmq.edu.mx](https://est.cmq.edu.mx/index.php/est/article/view/2156)
+:::
+
+:::{.source-item}
+**World Bank / UNICEF** — The State of Global Learning Poverty 2022. [unicef.org](https://www.unicef.org/media/122921/file/StateofLearningPoverty2022.pdf)
+:::
+
+### Datos Abiertos
+
+:::{.source-item}
+Todos los datasets utilizados son de acceso público. Repositorio: [github.com/alejandro14-hub/EmprendeIA_ods](https://github.com/alejandro14-hub/EmprendeIA_ods)
+:::
+
+:::{.footer-credit}
+**EmprendeIA** · Alejandro Saldaña · Eduardo Peñaloza · Tetsu Osnaya · HackODS UNAM 2026
+:::
+
+::::
+
+```{=html}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  /* ── Scroll-triggered visibility ── */
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        e.target.querySelectorAll('[data-count]').forEach(countUp);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -80px 0px' });
+
+  document.querySelectorAll(
+    '.fade-in,.scale-in,.slide-left,.slide-right,.blur-in,.chart-reveal,.stat-cards,.cycle-diagram'
+  ).forEach(el => obs.observe(el));
+
+  /* ── Counter animation (ease-out-quint) ── */
+  function countUp(el) {
+    if (el.dataset.counted) return;
+    el.dataset.counted = '1';
+    const raw  = el.dataset.count;
+    const pre  = el.dataset.pre || '';
+    const suf  = el.dataset.suf || '';
+    const dec  = (raw.split('.')[1] || '').length;
+    const end  = parseFloat(raw);
+    const dur  = 2000;
+    const t0   = performance.now();
+    (function tick(now) {
+      const p = Math.min((now - t0) / dur, 1);
+      const v = end * (1 - Math.pow(1 - p, 5));
+      el.textContent = pre + v.toFixed(dec) + suf;
+      if (p < 1) requestAnimationFrame(tick);
+      else el.classList.add('counted');
+    })(t0);
+  }
+
+  /* ── Parallax background shift on scroll ── */
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        document.querySelectorAll('[id^="s-"]').forEach(s => {
+          const r = s.getBoundingClientRect();
+          s.style.backgroundPositionY = 'calc(50% + ' + (r.top * 0.06) + 'px)';
+        });
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+});
+</script>
+```

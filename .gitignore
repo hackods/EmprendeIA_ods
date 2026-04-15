@@ -1,6 +1,5 @@
 # Quarto temporales
 *.quarto_ipynb*
-*_files/
 .quarto/
 
 # Python
@@ -12,8 +11,17 @@ __pycache__/
 # Jupyter
 .ipynb_checkpoints/
 
-# Dashboard generados
+# Dev tools
+.claude/
+.playwright-mcp/
+.vscode/
+
+# Debugging screenshots
+audit-*.png
+fix-*.png
+screenshot-*.png
+
+# Dashboard temporales
 dashboard/scatter3d.html
 dashboard/map_home.html
 dashboard/*.png
-.vscode/
