@@ -19,9 +19,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Never display script tags (Quarto wrapper reset can expose them) */
-script { display: none !important; }
-
 /* Hide ALL Quarto chrome */
 #title-block-header, .quarto-title-block, header.quarto-title-banner,
 nav.navbar, #quarto-header, .nav-footer, #quarto-content > nav,
@@ -33,7 +30,7 @@ nav.navbar, #quarto-header, .nav-footer, #quarto-content > nav,
    wrappers that break custom layouts.
    ═══════════════════════════════════════ */
 #quarto-content,
-#quarto-content > *,
+#quarto-content > *:not(script),
 .page-layout-full,
 .page-columns,
 .quarto-dashboard-content,
