@@ -3,6 +3,8 @@
 ## Estudiar No Es Suficiente
 ### La desconexión entre pobreza, educación y empleo digno en México
 
+**[Ver tablero interactivo](https://alejandro14-hub.github.io/EmprendeIA_ods/)**
+
 ---
 
 ## Equipo
