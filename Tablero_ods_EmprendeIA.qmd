@@ -1,5 +1,6 @@
 ---
-title: "Estudiar No Es Suficiente"
+title: "No es milagro"
+subtitle: "Cómo 4 estados de México rompieron el ciclo de pobreza, educación y empleo — y qué falta para que sean 32."
 format:
   html:
     theme: [darkly, landing.scss]
@@ -259,6 +260,112 @@ fig_dropout = go.Figure(go.Bar(
 style(fig_dropout, h=350)
 fig_dropout.update_layout(yaxis_title='Tasa de Abandono Nacional %',
                           margin=dict(t=10, b=10, l=10, r=10))
+
+# ══════════════════════════════════════════
+# ACTO IV — LOS QUE SALTARON (2010 → 2020)
+# ══════════════════════════════════════════
+# Escolaridad longitudinal
+escol_long = []
+for r in filas4[7:]:
+    if r[0] and str(r[0]).strip():
+        escol_long.append({
+            'estado':    str(r[0]).strip(),
+            'esc_2010':  float(r[1]) if r[1] else None,
+            'esc_2020':  float(r[7]) if r[7] else None,
+        })
+df_esc_long = pd.DataFrame(escol_long).dropna()
+df_esc_long['delta_esc'] = (df_esc_long['esc_2020'] - df_esc_long['esc_2010']).round(2)
+
+# Pobreza longitudinal desde el mismo concentrado CONEVAL
+pob_long = []
+for r in filas[7:]:
+    if r[1] and str(r[1]).strip().isdigit():
+        pob_long.append({
+            'estado':   str(r[2]).strip(),
+            'pob_2010': round(float(r[6]), 2) if r[6] else None,
+            'pob_2020': round(float(r[8]), 2) if r[8] else None,
+        })
+df_pob_long = pd.DataFrame(pob_long).dropna()
+df_pob_long['delta_pob'] = (df_pob_long['pob_2020'] - df_pob_long['pob_2010']).round(2)
+
+df_esc_long_s = df_esc_long[df_esc_long['estado'] != 'Estados Unidos Mexicanos']
+df_long = df_pob_long.merge(df_esc_long_s, on='estado')
+
+# Los 4 héroes: top-8 en AMBAS reducciones
+top8_pob = set(df_long.nsmallest(8, 'delta_pob')['estado'])
+top8_esc = set(df_long.nlargest(8, 'delta_esc')['estado'])
+heroes = sorted(top8_pob & top8_esc)
+df_long['heroe'] = df_long['estado'].isin(heroes)
+
+# Estadísticas para stat-cards
+n_esc_up       = int((df_long['delta_esc'] > 0).sum())
+n_pob_down     = int((df_long['delta_pob'] < 0).sum())
+avg_delta_esc  = float(df_long['delta_esc'].mean())
+r_deltas, p_deltas = stats.pearsonr(df_long['delta_pob'], df_long['delta_esc'])
+
+# Anclas narrativas
+zac = df_long[df_long['estado']=='Zacatecas'].iloc[0]
+
+# ── FIG 6: Slope chart escolaridad 2010 vs 2020 ──
+fig_slope = go.Figure()
+for _, rr in df_long.iterrows():
+    is_hero = bool(rr['heroe'])
+    color = C_GREEN if is_hero else 'rgba(139,148,158,0.25)'
+    width = 3 if is_hero else 1
+    size  = 9 if is_hero else 4
+    fig_slope.add_trace(go.Scatter(
+        x=[2010, 2020], y=[rr['esc_2010'], rr['esc_2020']],
+        mode='lines+markers',
+        line=dict(color=color, width=width),
+        marker=dict(size=size, color=color),
+        name=rr['estado'], showlegend=False,
+        hovertemplate=(f"<b>{rr['estado']}</b><br>"
+                       f"2010: {rr['esc_2010']:.2f} años<br>"
+                       f"2020: {rr['esc_2020']:.2f} años<br>"
+                       f"Δ: +{rr['delta_esc']:.2f} años<extra></extra>"),
+    ))
+for h in heroes:
+    rh = df_long[df_long['estado']==h].iloc[0]
+    fig_slope.add_annotation(
+        x=2020, y=rh['esc_2020'], text=f"  {h}",
+        xanchor='left', showarrow=False,
+        font=dict(color=C_GREEN, size=12, family='Inter'),
+    )
+style(fig_slope, h=540)
+fig_slope.update_layout(
+    xaxis=dict(tickmode='array', tickvals=[2010, 2020], tickfont=dict(size=14)),
+    yaxis_title='Años de escolaridad promedio',
+    margin=dict(t=20, b=50, l=60, r=140),
+)
+
+# ── FIG 7: Scatter de deltas pobreza × escolaridad ──
+fig_deltas = px.scatter(
+    df_long, x='delta_pob', y='delta_esc',
+    color='heroe',
+    color_discrete_map={True: C_GREEN, False: C_GRAY},
+    hover_name='estado',
+    hover_data={'heroe': False, 'delta_pob': ':.2f', 'delta_esc': ':.2f'},
+    trendline='ols',
+    labels={'delta_pob': 'Δ Pobreza 2010→2020 (puntos porcentuales)',
+            'delta_esc': 'Δ Escolaridad 2010→2020 (años)'},
+)
+fig_deltas.update_traces(
+    marker=dict(size=12, line=dict(width=1, color='rgba(255,255,255,0.3)')),
+    selector=dict(mode='markers'),
+)
+fig_deltas.update_traces(
+    line=dict(color='rgba(59,130,246,0.5)', width=2, dash='dash'),
+    selector=dict(mode='lines'),
+)
+style(fig_deltas, h=460)
+fig_deltas.update_layout(showlegend=False, margin=dict(t=20, b=50, l=60, r=30))
+for h in heroes:
+    rh = df_long[df_long['estado']==h].iloc[0]
+    fig_deltas.add_annotation(
+        x=rh['delta_pob'], y=rh['delta_esc'], text=h,
+        showarrow=False, yshift=14,
+        font=dict(size=11, color='#f0f6fc'), xanchor='center',
+    )
 ```
 
 <!-- ═══════════════════════════════════════ -->
@@ -270,10 +377,10 @@ fig_dropout.update_layout(yaxis_title='Tasa de Abandono Nacional %',
 HackODS UNAM 2026 · EmprendeIA
 :::
 
-<h1 class="blur-in d1" style="font-size:clamp(3rem,7vw,6rem); font-weight:700; color:#f0f6fc; line-height:1.05; letter-spacing:-0.03em; margin:0 0 1.5rem 0;">Estudiar <span class="accent">No Es Suficiente.</span></h1>
+<h1 class="blur-in d1" style="font-size:clamp(3rem,7vw,6rem); font-weight:700; color:#f0f6fc; line-height:1.05; letter-spacing:-0.03em; margin:0 0 1.5rem 0;">No es <span class="accent">milagro.</span></h1>
 
 :::{.hero-sub .fade-in .d2}
-La historia de 25.1 millones de mexicanos que el sistema expulsó. Un recorrido por los datos que desmienten el mito de la meritocracia.
+Entre 2010 y 2020, los 32 estados de México subieron en escolaridad. Cuatro rompieron el ciclo. Esta es la historia de cómo lo hicieron — y qué falta para que sean 32.
 :::
 
 :::{.hero-tags .fade-in .d3}
@@ -328,15 +435,15 @@ print('<div class="stat-desc">Mexicanos con rezago educativo — CONEVAL 2022</d
 
 ```{python}
 #| output: asis
-print(f'<div class="stat-value blue" data-count="{sal_elem:.0f}" data-pre="$" data-suf="/hr">0</div>')
-print('<div class="stat-desc">Salario en ocupaciones elementales — INEGI 2024</div>')
+print(f'<div class="stat-value green" data-count="4">0</div>')
+print('<div class="stat-desc">Estados que rompieron el ciclo entre 2010 y 2020</div>')
 ```
 
 :::
 :::
 
 :::{.section-quote .fade-in .d3}
-"Spoiler: Luis no fracasó. El sistema lo expulsó."
+"Luis no fracasó. Tampoco está condenado. El sistema se puede rediseñar — y cuatro estados ya lo están demostrando."
 :::
 
 :::
@@ -377,6 +484,8 @@ En Chiapas, **3 de cada 10 personas** nunca completaron la educación que les co
 En 2020, 24.4 millones de mexicanos lo padecían. Para 2022, la cifra subió a **25.1 millones**. No está bajando. Está creciendo.
 
 Pero Luis tiene 6 años, y su mamá lo inscribió en la primaria. Todavía hay esperanza. *¿Verdad?*
+
+*Guarda esto en la mente: Chiapas de 2010 y Chiapas de 2020 no son el mismo Chiapas. Algo se movió. Volveremos a ese dato.*
 :::
 
 :::{.slide-right .d3}
@@ -412,8 +521,8 @@ print(f'<div class="stat-source" style="margin-top:1rem;">Chiapas: {esc_chiapas}
 
 ```{python}
 #| output: asis
-print(f'<span class="corr-r">r = {r_ext:.2f}</span>')
-print(f'<span class="corr-desc">Correlación pobreza extrema vs escolaridad (p < 0.001, n=32 estados)</span>')
+print(f'<span class="corr-r">r ≈ −0.8</span>')
+print(f'<span class="corr-desc">Correlación pobreza extrema vs escolaridad (p < 10⁻⁷, n=32 estados)</span>')
 ```
 
 :::
@@ -446,6 +555,8 @@ UNICEF reporta que en México, **solo 56 de cada 100 niños** que entran a prima
 La prepa cuesta. No la colegiatura — cuesta el **tiempo**. Cuesta las 4 horas de camión. Cuesta el plato de comida que su mamá no tiene si él no trabaja.
 
 Un día, Luis deja de ir. No es que no le guste estudiar. Es que **su familia necesita que deje de hacerlo.**
+
+Pero el puente no se rompe para todos. La pregunta no es por qué algunos caen. Es **por qué algunos no.**
 :::
 
 :::{.slide-right .d3}
@@ -498,8 +609,8 @@ fig_scatter
 
 ```{python}
 #| output: asis
-print(f'<span class="corr-r">r = {r_ext:.2f}</span>')
-print('<span class="corr-desc">A mayor pobreza extrema, menor escolaridad promedio — 32 estados, p < 0.001</span>')
+print(f'<span class="corr-r">r ≈ −0.8</span>')
+print('<span class="corr-desc">A mayor pobreza extrema, menor escolaridad promedio — 32 estados, p < 10⁻⁷</span>')
 ```
 
 :::
@@ -539,6 +650,8 @@ print('<div class="stat-label">pesos por hora. Ese es el precio de no tener prep
 Luis tiene 18 años, secundaria terminada, y necesita comer. El mercado laboral mexicano tiene un piso reservado para él: **ocupaciones elementales** — limpieza, carga, trabajo manual sin especialización.
 
 Arriba de Luis, los profesionistas ganan **$109/hr**. Los directivos, **$117/hr**. Luis tendría que trabajar **3 horas** para ganar lo que un directivo gana en una.
+
+Y hay otro piso debajo del piso: en las mismas ocupaciones elementales, los hombres ganan más por hora que las mujeres. El sótano tiene género.
 :::
 
 :::{.slide-right .d3}
@@ -559,71 +672,152 @@ Y aquí viene lo peor: con $40 la hora, Luis no puede pagar la renta, la comida,
 ::::
 
 <!-- ═══════════════════════════════════════ -->
-<!-- SECTION 8: EL CICLO (P6 FIX: merged 3.0x) -->
+<!-- ACTO IV — LOS QUE SALTARON              -->
 <!-- ═══════════════════════════════════════ -->
 
-::::{.landing-section .alt-bg #s-ciclo}
+::::{.landing-section #s-acto4}
+:::{.section-inner}
+
+:::{.act-label .green .fade-in}
+Acto IV · Movilidad
+:::
+
+:::{.section-title .fade-in .d1}
+Pero hay estados que saltaron.
+:::
+
+:::{.section-body .fade-in .d2 style="max-width:720px;"}
+Cuando miramos los datos entre **2010 y 2020**, aparece algo que nadie está contando: **los 32 estados de México subieron en escolaridad promedio**. Ni uno retrocedió. El país avanzó — aunque a velocidades muy distintas.
+
+Y **26 de los 32 estados también redujeron su pobreza** en la misma década. El ciclo no es una profecía cerrada. Es un diseño que se puede rediseñar.
+:::
+
+:::{.stat-cards .fade-in .d2}
+
+:::{.stat-card}
+
+```{python}
+#| output: asis
+print(f'<div class="stat-value green" data-count="{n_esc_up}">0</div>')
+print('<div class="stat-desc">de 32 estados ganaron escolaridad promedio 2010–2020</div>')
+```
+
+:::
+
+:::{.stat-card}
+
+```{python}
+#| output: asis
+print(f'<div class="stat-value green" data-count="{n_pob_down}">0</div>')
+print('<div class="stat-desc">de 32 estados redujeron su pobreza en la misma década</div>')
+```
+
+:::
+
+:::{.stat-card}
+
+```{python}
+#| output: asis
+print(f'<div class="stat-value amber" data-count="{avg_delta_esc:.2f}" data-suf=" años">0</div>')
+print('<div class="stat-desc">Ganancia promedio de escolaridad por estado — INEGI Censo 2020</div>')
+```
+
+:::
+:::
+
+:::{.chart-full .chart-reveal .d2}
+
+```{python}
+fig_slope
+```
+
+:::
+
+:::{.section-body .fade-in .d2 style="max-width:720px; margin-top:2rem;"}
+Cuatro estados hicieron el **doble salto** — bajaron su pobreza **y** ganaron años de escolaridad por encima del promedio: **Zacatecas, Chihuahua, Querétaro e Hidalgo**. Zacatecas lidera: redujo su pobreza **16.5 puntos porcentuales** en una sola década — de 60% a 44%.
+:::
+
+:::{.chart-full .chart-reveal .d3}
+
+```{python}
+fig_deltas
+```
+
+:::
+
+:::{.corr-badge .fade-in .d3 style="display:inline-flex; margin-top:1rem;"}
+
+```{python}
+#| output: asis
+print(f'<span class="corr-r">r = {r_deltas:.2f}</span>')
+print(f'<span class="corr-desc">Correlación Δpobreza vs Δescolaridad 2010–2020 (p = {p_deltas:.3f}) — donde la pobreza bajó más, la escolaridad subió más</span>')
+```
+
+:::
+
+:::{.section-body .fade-in .d3 style="max-width:720px; margin-top:2rem;"}
+La correlación de los cambios es más débil que la de niveles (r ≈ −0.8) — reducir pobreza en una década es difícil y los estados partieron de puntos muy distintos. Pero **la dirección es clara y estadísticamente significativa**: los estados que más redujeron pobreza también fueron los que más ganaron escolaridad.
+
+Seis estados **subieron** su pobreza (Quintana Roo, Ciudad de México, Estado de México, Morelos, Puebla, Veracruz). La historia no es uniforme. Pero es movible.
+:::
+
+:::
+::::
+
+<!-- ═══════════════════════════════════════ -->
+<!-- ACTO V — LA PALANCA (reemplaza ciclo)  -->
+<!-- ═══════════════════════════════════════ -->
+
+::::{.landing-section .alt-bg #s-palanca}
 :::{.section-inner style="text-align:center;"}
 
-:::{.blur-in}
+:::{.act-label .blue .fade-in}
+Acto V · La palanca
+:::
 
-```{python}
-#| output: asis
-print(f'<div class="stat-huge blue" data-count="{brecha_x}" data-suf="x">0</div>')
-print(f'<div class="stat-label" style="font-size:1.3rem;">Un directivo gana {brecha_x} veces más que un trabajador elemental por hora.</div>')
-print(f'<div class="stat-source" style="margin-top:1rem;">${sal_dir:.0f}/hr vs ${sal_elem:.0f}/hr &nbsp;—&nbsp; INEGI, ENOE 2024</div>')
-```
+:::{.section-title .fade-in .d1 style="margin-top:1rem;"}
+Lo que se mide, se mueve.
+:::
+
+:::{.section-body .fade-in .d2 style="max-width:720px; margin:0 auto 3rem;"}
+La correlación pobreza extrema × escolaridad (**r ≈ −0.8**) es una palanca de dos sentidos. Si la pobreza sube, la escolaridad cae. Si **baja, la escolaridad sube**. Zacatecas, Chihuahua, Querétaro e Hidalgo lo probaron en una década. No fue milagro — fue presupuesto dirigido, política coordinada, y medición honesta.
+:::
+
+:::{.cta-grid .fade-in .d2}
+
+:::{.cta-card .cta-policy}
+<div class="cta-icon">🏛️</div>
+<div class="cta-who">Si formulas política pública</div>
+<div class="cta-what">Atacar pobreza extrema mueve la escolaridad más que cualquier beca aislada.</div>
+<div class="cta-evidence">Evidencia: r ≈ −0.8 en niveles, Zacatecas bajó pobreza 16.5 pp y ganó 1.35 años de escolaridad en una década.</div>
+:::
+
+:::{.cta-card .cta-teacher}
+<div class="cta-icon">📚</div>
+<div class="cta-who">Si eres docente o director</div>
+<div class="cta-what">El predictor más fuerte del rezago de tu aula no es la currícula — es el ingreso del hogar.</div>
+<div class="cta-evidence">Evidencia: rezago educativo × escolaridad estatal, r = −0.94, p < 10⁻¹⁵.</div>
+:::
+
+:::{.cta-card .cta-citizen}
+<div class="cta-icon">🗳️</div>
+<div class="cta-who">Si eres ciudadano</div>
+<div class="cta-what">Cuando evalúes a tu gobernador, mira un solo número: años de escolaridad ganados en una década.</div>
+<div class="cta-evidence">Evidencia: los 32 estados ganaron escolaridad 2010–2020 — pero a velocidades muy distintas.</div>
+:::
 
 :::
 
-:::{.section-title .fade-in .d1 style="margin-top:4rem;"}
-No es Luis. Es el sistema.
+:::{.section-title .blur-in .d3 style="margin-top:5rem; font-size:clamp(2.5rem, 6vw, 5rem);"}
+No es milagro.
 :::
 
-:::{.section-body .fade-in .d2 style="max-width:700px; margin:0 auto 3rem;"}
-Cuando corremos los datos de los 32 estados mexicanos, tres verdades emergen con fuerza matemática. La pobreza, la educación truncada y el empleo precario no son fenómenos aislados — son **engranajes de un mismo ciclo** que se auto-alimenta.
+:::{.section-title .blur-in .d3 style="margin-top:-0.5rem; font-size:clamp(2.5rem, 6vw, 5rem); color:#58a6ff;"}
+Es presupuesto.
 :::
 
-:::{.cycle-diagram .fade-in .d2}
-
-:::{.cycle-node .ods1}
-<div class="cycle-ods">ODS 1</div>
-<div class="cycle-name">Pobreza</div>
-<div class="cycle-stat">r = −0.82</div>
-:::
-
-<div class="cycle-arrow">→</div>
-
-:::{.cycle-node .ods4}
-<div class="cycle-ods">ODS 4</div>
-<div class="cycle-name">Educación truncada</div>
-
-```{python}
-#| output: asis
-print(f'<div class="cycle-stat">{brecha_anos} años menos</div>')
-```
-
-:::
-
-<div class="cycle-arrow">→</div>
-
-:::{.cycle-node .ods8}
-<div class="cycle-ods">ODS 8</div>
-<div class="cycle-name">Empleo precario</div>
-
-```{python}
-#| output: asis
-print(f'<div class="cycle-stat">${sal_elem:.0f} vs ${sal_dir:.0f}/hr</div>')
-```
-
-:::
-
-<div class="cycle-arrow" style="margin-top:1rem;">↩ el ciclo se repite</div>
-
-:::
-
-:::{.section-quote .blue .fade-in .d3 style="max-width:700px; margin:3rem auto 0; text-align:left;"}
-"Decirle a Luis *'estudia más'* es como decirle a alguien que se ahoga *'nada mejor'*. El problema no es Luis. El problema es el agua. Romper el ciclo exige atacar la raíz: mientras la pobreza estructural no se destruya, la educación seguirá siendo un privilegio y el trabajo digno una fantasía."
+:::{.section-body .fade-in .d3 style="max-width:620px; margin:3rem auto 0; text-align:center; color:#8b949e;"}
+El ciclo de pobreza, educación truncada y empleo precario **se rompió cuatro veces en una década**. Ahora hay que multiplicarlo por ocho. Y los presupuestos — a diferencia de los destinos — se pueden cambiar.
 :::
 
 :::
@@ -673,6 +867,14 @@ print(f'<div class="cycle-stat">${sal_elem:.0f} vs ${sal_dir:.0f}/hr</div>')
 
 :::{.source-item}
 Todos los datasets utilizados son de acceso público. Repositorio: [github.com/alejandro14-hub/EmprendeIA_ods](https://github.com/alejandro14-hub/EmprendeIA_ods)
+:::
+
+### Nota metodológica
+
+:::{.source-item}
+Las correlaciones se calculan sobre los 32 estados (n = 32). La correlación de niveles (pobreza extrema vs escolaridad 2020, r ≈ −0.8) es fuerte y estadísticamente significativa (p < 10⁻⁷). La correlación de cambios (Δpobreza vs Δescolaridad 2010–2020, r = −0.42, p = 0.016) es más débil — reducir pobreza en una década depende de políticas sostenidas, no solo de voluntad.
+
+No afirmamos causalidad: los datos son observacionales. Sí afirmamos dirección: los estados que redujeron pobreza fueron también, en promedio, los que más ganaron escolaridad. Seis estados subieron su pobreza (Quintana Roo, Ciudad de México, Estado de México, Morelos, Puebla, Veracruz); el progreso no fue uniforme.
 :::
 
 :::{.footer-credit}

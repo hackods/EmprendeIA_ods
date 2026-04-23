@@ -1,7 +1,7 @@
 # EmprendeIA_ods 
 
-## Estudiar No Es Suficiente
-### La desconexión entre pobreza, educación y empleo digno en México
+## No es milagro
+### Cómo 4 estados de México rompieron el ciclo de pobreza, educación y empleo — y qué falta para que sean 32
 
 **[Ver tablero interactivo](https://alejandro14-hub.github.io/EmprendeIA_ods/)**
 
@@ -39,19 +39,27 @@ Al correlacionar los datos de los 32 estados mexicanos encontramos que:
 
 | Relación | Correlación (r) | p-valor | Interpretación |
 |----------|:---:|:---:|---|
-| Pobreza extrema vs Escolaridad promedio | **−0.82** | < 0.001 | **Muy fuerte**: a mayor pobreza extrema, menor escolaridad |
+| Pobreza extrema vs Escolaridad promedio | **≈ −0.8** | < 10⁻⁷ | **Muy fuerte**: a mayor pobreza extrema, menor escolaridad |
 | Rezago educativo vs Escolaridad promedio | **−0.94** | < 0.001 | **Casi perfecta**: el rezago educativo medido por CONEVAL predice la escolaridad estatal |
 | Pobreza vs Abandono Media Superior | −0.15 | 0.42 | **Nula**: el abandono escolar NO correlaciona con pobreza a nivel estatal |
 
 Este descubrimiento nos obligó a pivotar: en lugar de medir el abandono escolar (variable confundida por el mercado laboral urbano), medimos la **escolaridad promedio** como indicador del daño acumulado que la pobreza causa en la educación. La brecha entre Chiapas (7.78 años) y Nuevo León (10.74 años) — casi **3 años de escolaridad** — es la evidencia central del tablero.
+
+### Movilidad entre 2010 y 2020
+
+Los datos del INEGI Censo 2020 muestran que los **32 estados del país ganaron escolaridad** (promedio +1.12 años) entre 2010 y 2020. **26 de ellos redujeron también su pobreza**. Cuatro hicieron el doble salto: **Zacatecas, Chihuahua, Querétaro e Hidalgo**. La correlación Δpobreza × Δescolaridad es r = −0.42, p = 0.016 — más débil que la de niveles pero direccionalmente consistente: donde la pobreza bajó más, la escolaridad subió más.
+
+Seis estados **subieron** su pobreza en la década (Quintana Roo, Ciudad de México, Estado de México, Morelos, Puebla, Veracruz). El progreso no fue uniforme — pero fue posible.
 
 ### Coherencia narrativa
 
 El relato está estructurado como la historia de **Luis**, un joven mexicano cuya trayectoria de vida ilustra el ciclo sistémico. Está dividido en 3 Actos:
 
 1. **Acto I — "Donde naciste ya decidió tu futuro" (ODS 1):** La pobreza como lotería geográfica. Mapa coroplético y comparativa de extremos.
-2. **Acto II — "El puente que se rompe" (ODS 4):** Cómo la pobreza extrema predice la escolaridad (r = −0.82). Scatter plot con trendline y datos de UNICEF.
-3. **Acto III — "Bienvenido al piso de abajo" (ODS 8):** La condena salarial: $40/hr en ocupaciones elementales vs $117/hr para directivos. El ciclo se reinicia.
+2. **Acto II — "El puente que se rompe" (ODS 4):** Cómo la pobreza extrema predice la escolaridad (r ≈ −0.8). Scatter plot con trendline y datos de UNICEF.
+3. **Acto III — "Bienvenido al piso de abajo" (ODS 8):** La brecha salarial: $40/hr en ocupaciones elementales vs $117/hr para directivos.
+4. **Acto IV — "Los que saltaron":** Entre 2010 y 2020, los 32 estados ganaron escolaridad; 26 redujeron pobreza; cuatro hicieron el doble salto (Zacatecas, Chihuahua, Querétaro, Hidalgo).
+5. **Acto V — "La palanca":** Tres llamados a la acción (política pública, docentes, ciudadanos). Cierre: *No es milagro. Es presupuesto.*
 
 ### Potencial de impacto
 

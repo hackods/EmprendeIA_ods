@@ -767,3 +767,55 @@ main, main.content {
   .hero h1 { font-size: 2.5rem; }
   .section-title { font-size: 1.8rem; }
 }
+
+/* ═══════════════════════════════════════
+   CTA grid — Acto V "La palanca"
+   ═══════════════════════════════════════ */
+.cta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: left;
+}
+.cta-card {
+  background: rgba(22, 27, 34, 0.6);
+  border: 1px solid rgba(240, 246, 252, 0.08);
+  border-radius: 12px;
+  padding: 2rem 1.75rem;
+  backdrop-filter: blur(12px);
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+.cta-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(240, 246, 252, 0.2);
+}
+.cta-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+.cta-who {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #8b949e;
+  margin-bottom: 0.75rem;
+}
+.cta-what {
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: #f0f6fc;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+}
+.cta-evidence {
+  font-size: 0.85rem;
+  color: #6e7681;
+  border-left: 2px solid rgba(139, 148, 158, 0.3);
+  padding-left: 0.75rem;
+  line-height: 1.5;
+}
+.act-label.green { color: #10b981; }
+.act-label.blue  { color: #3b82f6; }
