@@ -1,0 +1,120 @@
+/*-- scss:defaults --*/
+
+// ODS semantic palette — tonalidades inspiradas en ONU oficial
+$primary:   #3b82f6;   // Azul: palanca, análisis
+$danger:    #e5243b;   // Rojo ODS 1: pobreza
+$warning:   #f59e0b;   // Ámbar ODS 4: educación
+$success:   #10b981;   // Verde: movilidad, solución
+$info:      #22d3ee;   // Cian: género (mujeres)
+$secondary: #6e7681;   // Gris neutral
+
+/*-- scss:rules --*/
+
+// ═══════════════════════════════════════════════════════
+// TIPOGRAFÍA — refinamiento para dashboard de pitch
+// ═══════════════════════════════════════════════════════
+
+.navbar {
+  font-weight: 500;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.navbar-brand {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.nav-link {
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+.nav-link.active {
+  font-weight: 600;
+}
+
+// ═══════════════════════════════════════════════════════
+// VALUEBOXES — números grandes, títulos breves y claros
+// ═══════════════════════════════════════════════════════
+
+.valuebox .value,
+.value-box-value {
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1 !important;
+}
+
+.valuebox .title,
+.value-box-title {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem !important;
+  font-weight: 500 !important;
+  opacity: 0.9;
+}
+
+.valuebox .value-box-showcase,
+.value-box-showcase {
+  opacity: 0.9;
+}
+
+// ═══════════════════════════════════════════════════════
+// CARDS — headers claros, padding equilibrado
+// ═══════════════════════════════════════════════════════
+
+.card-header {
+  font-weight: 600;
+  font-size: 0.88rem;
+  letter-spacing: 0.015em;
+}
+
+// ═══════════════════════════════════════════════════════
+// CIERRE · el momento visual del pitch
+// "No es milagro. Es presupuesto."
+// ═══════════════════════════════════════════════════════
+
+.cierre-card {
+  background: radial-gradient(circle at 30% 50%,
+               rgba(59, 130, 246, 0.08) 0%,
+               rgba(13, 17, 23, 1) 70%) !important;
+  border: 1px solid rgba(59, 130, 246, 0.15) !important;
+}
+
+.cierre-card .card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 1rem !important;
+}
+
+.cierre-card h1 {
+  font-size: clamp(1.5rem, 3vw, 2.8rem) !important;
+  font-weight: 700 !important;
+  margin: 0.1rem 0 !important;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+.cierre-card h1.accent {
+  color: #58a6ff !important;
+  background: linear-gradient(90deg, #58a6ff, #22d3ee);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+// ═══════════════════════════════════════════════════════
+// BRANDING EmprendeIA — acento en navbar
+// ═══════════════════════════════════════════════════════
+
+.navbar-brand::before {
+  content: "●";
+  color: #10b981;
+  margin-right: 0.6rem;
+  font-size: 0.9rem;
+}
+
+// Subtítulo de navbar más visible
+.navbar .quarto-dashboard-header-title-group {
+  display: flex;
+  flex-direction: column;
+}

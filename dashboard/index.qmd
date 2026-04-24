@@ -4,7 +4,7 @@ subtitle: "Cómo 4 estados de México rompieron el ciclo de pobreza, educación 
 author: "EmprendeIA · HackODS UNAM 2026"
 format:
   dashboard:
-    theme: darkly
+    theme: [darkly, custom.scss]
     nav-buttons: [github]
 lang: es
 execute:
@@ -537,8 +537,8 @@ dict(icon="currency-exchange", color="primary", value=f"${sal_elem:.0f}/hr")
 
 ```{python}
 #| content: valuebox
-#| title: "Brecha directivos/elementales"
-dict(icon="graph-up", color="secondary", value=f"{brecha_x}x")
+#| title: "ODS 8 · Techo salarial (directivos)"
+dict(icon="briefcase", color="secondary", value=f"${sal_dir:.0f}/hr")
 ```
 
 ## Row {height="38%"}
@@ -696,7 +696,7 @@ dict(icon="stars", color="success", value=f"{len(heroes)}")
 dict(icon="lightning-charge", color="success", value="−16 pp")
 ```
 
-## Row {height="42%"}
+## Row {height="36%"}
 
 ```{python}
 #| title: "Escolaridad promedio por entidad 2010 → 2020 (INEGI Censo)"
@@ -708,23 +708,37 @@ fig_slope
 fig_deltas
 ```
 
-## Row {height="36%"}
+## Row {height="24%" .cta-row}
 
-::: {.card title="La palanca · cuatro acciones"}
-Entre 2010 y 2020, **ningún estado retrocedió en escolaridad**. Cuatro hicieron el doble salto: **Zacatecas, Chihuahua, Querétaro, Hidalgo**. Zacatecas bajó pobreza **16 puntos porcentuales** en una década.
+::: {.card title="🏛️ Política pública"}
+Atacar **pobreza extrema** mueve la escolaridad más que cualquier beca aislada.
 
-**No fue milagro. Lo midieron, lo planearon, lo presupuestaron.**
+*Evidencia: Zacatecas −16 pp · +1.35 años escolaridad*
+:::
 
-- **Política pública** — atacar pobreza extrema mueve la escolaridad más que cualquier beca aislada.
-- **Docentes** — el predictor más fuerte del rezago no es su currícula, es el ingreso del hogar de sus alumnos.
-- **Ciudadanos** — evalúen a su gobernador por años de escolaridad ganados, no por discursos.
-- **Y nosotros, en EmprendeIA** — trabajamos en ese eslabón: apoyamos emprendimientos y empleo digno. Porque el presupuesto que rompe el ciclo, al final, es el salario de un trabajo decente.
+::: {.card title="📚 Docentes"}
+El predictor más fuerte del rezago **no es su currícula** — es el ingreso del hogar de sus alumnos.
 
----
+*Evidencia: rezago × escolaridad estatal, r = −0.94*
+:::
 
-**El ciclo se rompió cuatro veces en una década. Hay que multiplicarlo por ocho.**
+::: {.card title="🗳️ Ciudadanos"}
+Evalúen a su gobernador por **años de escolaridad ganados**, no por discursos.
 
-## No es milagro. Es presupuesto. {.text-center}
+*Evidencia: los 32 estados subieron, pero a velocidades muy distintas*
+:::
+
+::: {.card title="🚀 EmprendeIA"}
+Trabajamos en ese eslabón: emprendimientos y **empleo digno**.
+
+*Porque el presupuesto que rompe el ciclo, al final, es el salario de un trabajo decente.*
+:::
+
+## Row {height="18%" .cierre-row}
+
+::: {.card .cierre-card}
+# No es milagro. {.text-center}
+# Es presupuesto. {.text-center .accent}
 :::
 
 # 📊 Datos
