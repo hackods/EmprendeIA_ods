@@ -1179,6 +1179,16 @@ Este tablero se construye sobre siete datasets oficiales, todos de acceso públi
 
 Todos los archivos fuente se encuentran en `datos/ods1/`, `datos/ods4/` y `datos/ods8/`, y el pipeline de carga es reproducible con `uv run quarto render dashboard/index.qmd`.
 
+**Escala geográfica — por qué estado y no municipio.** El corte territorial es decisión deliberada, no conveniencia. Usamos **nivel estatal** por tres razones documentables:
+
+1. **Es la unidad donde se ejecuta el presupuesto de los tres ODS en México.** Las transferencias condicionadas de CONEVAL, las becas de la SEP y los programas de la STPS se asignan y rinden cuentas a 32 gobernaturas. Una recomendación de política pública que no conecte con una gobernatura no tiene destinatario.
+
+2. **Los cuatro estados que rompen el ciclo en el Acto IV — Zacatecas, Chihuahua, Querétaro, Hidalgo — son gobernaturas completas, no municipios aislados.** El mecanismo que estudiamos (presupuesto dirigido a reducir pobreza extrema → escolaridad promedio sube) opera a escala estatal porque los programas que lo producen operan a escala estatal.
+
+3. **CONEVAL 2020 a nivel municipal tiene subregistro documentado en comunidades indígenas y zonas rurales dispersas.** Bajar a municipio falsificaría la lectura del ciclo — justamente en los lugares donde el ciclo es más agudo — porque las poblaciones más afectadas son las peor contadas.
+
+Donde el dato municipal sí aporta (la paradoja Chiapas/Nuevo León en desocupación juvenil), se ancla en texto al estado: en el **Acto III · ODS 8** explicamos que la desocupación juvenil "baja" de Chiapas esconde informalidad municipal masiva — un hallazgo que no se pierde al quedarse en estado, se ilumina desde él.
+
 ### Fuentes
 
 :::{.source-item}
