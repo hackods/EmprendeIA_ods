@@ -118,3 +118,109 @@ $secondary: #6e7681;   // Gris neutral
   display: flex;
   flex-direction: column;
 }
+
+// ═══════════════════════════════════════════════════════
+// NUMBERED TABS · storytelling theatrical
+// 100% CSS (counters + :has) · T6-safe
+// Bootstrap ya incluye navegación de flechas ←→ vía su
+// propio JS bundled — NO agregamos JS nuestro.
+// ═══════════════════════════════════════════════════════
+
+// Contador automático por tab
+.navbar-nav {
+  counter-reset: act;
+  position: relative;
+  padding-right: 6rem;  // espacio para el indicador flotante
+}
+
+.navbar-nav .nav-link {
+  counter-increment: act;
+  position: relative;
+  padding-left: 2.2rem !important;
+  transition: all 0.25s ease;
+}
+
+.navbar-nav .nav-link::before {
+  content: counter(act, decimal-leading-zero);
+  position: absolute;
+  left: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'Courier New', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.05em;
+  transition: all 0.25s ease;
+}
+
+// Tab activa: número en ámbar, más prominente
+.navbar-nav .nav-link.active::before {
+  color: #f59e0b;
+  font-size: 0.85rem;
+  transform: translateY(-50%) scale(1.15);
+  text-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+}
+
+// Hover feedback
+.navbar-nav .nav-link:hover::before {
+  color: #58a6ff;
+}
+
+// ═══════════════════════════════════════════════════════
+// INDICADOR "0X / 05" · dinámico con :has()
+// Cambia conforme el usuario navega ←→ o clickea
+// ═══════════════════════════════════════════════════════
+
+.navbar-nav::after {
+  content: "01 / 05";
+  position: absolute;
+  right: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #f59e0b;
+  letter-spacing: 0.12em;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 4px;
+  background: rgba(245, 158, 11, 0.06);
+  pointer-events: none;
+}
+
+// Cambia el contenido según qué tab tiene .active
+.navbar-nav:has(.nav-item:nth-child(1) .nav-link.active)::after { content: "01 / 05"; }
+.navbar-nav:has(.nav-item:nth-child(2) .nav-link.active)::after { content: "02 / 05"; }
+.navbar-nav:has(.nav-item:nth-child(3) .nav-link.active)::after { content: "03 / 05"; }
+.navbar-nav:has(.nav-item:nth-child(4) .nav-link.active)::after { content: "04 / 05"; }
+.navbar-nav:has(.nav-item:nth-child(5) .nav-link.active)::after { content: "05 / 05"; }
+
+// ═══════════════════════════════════════════════════════
+// HINT de navegación por teclado (estático, no invasivo)
+// ═══════════════════════════════════════════════════════
+
+.navbar-brand-container::after {
+  content: "← → navegar";
+  display: inline-block;
+  margin-left: 1rem;
+  padding: 0.2rem 0.55rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+// Responsive: ocultar hint y indicador en móvil para no saturar
+@media (max-width: 768px) {
+  .navbar-nav::after,
+  .navbar-brand-container::after {
+    display: none;
+  }
+}
