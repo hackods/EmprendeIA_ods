@@ -2,13 +2,12 @@
 title: "No es milagro"
 subtitle: "Cómo 4 estados de México rompieron el ciclo de pobreza, educación y empleo — y qué falta para que sean 32."
 format:
-  html:
+  dashboard:
     theme: [darkly, landing.scss]
-    toc: false
-    page-layout: full
-    smooth-scroll: true
+    scrolling: true
     embed-resources: false
-    title-block-style: none
+    expandable: false
+    nav-buttons: []
 lang: es
 execute:
   echo: false
@@ -563,7 +562,7 @@ La promesa siempre fue la misma: **si te esfuerzas y estudias, sales adelante.**
 
 ```{python}
 #| output: asis
-print(f'<div class="stat-value red" data-count="{pob_chiapas:.1f}" data-suf="%">0</div>')
+print(f'<div class="stat-value red">{pob_chiapas:.1f}%</div>')
 print('<div class="stat-desc">Pobreza en Chiapas — el estado donde nació Luis</div>')
 ```
 
@@ -573,7 +572,7 @@ print('<div class="stat-desc">Pobreza en Chiapas — el estado donde nació Luis
 
 ```{python}
 #| output: asis
-print('<div class="stat-value amber" data-count="25.1" data-suf="M">0</div>')
+print('<div class="stat-value amber">25.1M</div>')
 print('<div class="stat-desc">Mexicanos con rezago educativo — CONEVAL 2022</div>')
 ```
 
@@ -583,7 +582,7 @@ print('<div class="stat-desc">Mexicanos con rezago educativo — CONEVAL 2022</d
 
 ```{python}
 #| output: asis
-print(f'<div class="stat-value green" data-count="4">0</div>')
+print(f'<div class="stat-value green">4</div>')
 print('<div class="stat-desc">Estados que rompieron el ciclo entre 2010 y 2020</div>')
 ```
 
@@ -658,7 +657,7 @@ fig_bars
 
 ```{python}
 #| output: asis
-print(f'<div class="stat-huge red" data-count="{brecha_anos}">0</div>')
+print(f'<div class="stat-huge red">{brecha_anos}</div>')
 print('<div class="stat-label" style="font-size:1.3rem;">años de escolaridad separan al estado más pobre del más rico.</div>')
 print(f'<div class="stat-source" style="margin-top:1rem;">Chiapas: {esc_chiapas} años &nbsp;·&nbsp; Nuevo León: {esc_nl} años &nbsp;—&nbsp; INEGI, Censo 2020</div>')
 ```
@@ -726,7 +725,7 @@ fig_dropout
 :::{.section-inner style="text-align:center;"}
 
 :::{.blur-in}
-<div class="stat-huge amber"><span data-count="56">0</span> de 100</div>
+<div class="stat-huge amber"><span>56</span> de 100</div>
 <div class="stat-label" style="font-size:1.3rem;">niños que entran a primaria terminan la preparatoria.</div>
 <div class="stat-source" style="margin-top:1rem;">UNICEF, Country Office Annual Report México 2023</div>
 :::
@@ -791,7 +790,7 @@ Bienvenido al piso de abajo.
 
 ```{python}
 #| output: asis
-print(f'<div class="stat-huge red" style="font-size:5rem;" data-count="{sal_elem:.0f}" data-pre="$">0</div>')
+print(f'<div class="stat-huge red" style="font-size:5rem;">${sal_elem:.0f}</div>')
 print('<div class="stat-label">pesos por hora. Ese es el precio de no tener preparatoria.</div>')
 ```
 
@@ -861,7 +860,7 @@ fig_youth
 
 ```{python}
 #| output: asis
-print(f'<div class="stat-value amber" data-count="{ratio_juv_2019}" data-suf="x">0</div>')
+print(f'<div class="stat-value amber">{ratio_juv_2019}x</div>')
 print('<div class="stat-desc">más desocupación entre jóvenes 15-24 que entre adultos — ENOE 2019</div>')
 ```
 
@@ -871,7 +870,7 @@ print('<div class="stat-desc">más desocupación entre jóvenes 15-24 que entre 
 
 ```{python}
 #| output: asis
-print(f'<div class="stat-value amber" data-count="{desoc_juv_2019}" data-suf="%">0</div>')
+print(f'<div class="stat-value amber">{desoc_juv_2019}%</div>')
 print('<div class="stat-desc">desocupación juvenil nacional 2019 — ONU indicador 8.5.2</div>')
 ```
 
@@ -881,7 +880,7 @@ print('<div class="stat-desc">desocupación juvenil nacional 2019 — ONU indica
 
 ```{python}
 #| output: asis
-print(f'<div class="stat-value red" data-count="56" data-suf="%">0</div>')
+print(f'<div class="stat-value red">56%</div>')
 print('<div class="stat-desc">informalidad laboral en México — OCDE 2026</div>')
 ```
 
@@ -921,7 +920,7 @@ fig_gender
 
 ```{python}
 #| output: asis
-print(f'<div class="stat-value red" data-count="{brecha_op_pct}" data-suf="%">0</div>')
+print(f'<div class="stat-value red">{brecha_op_pct}%</div>')
 print('<div class="stat-desc">más ganan los hombres en oficios especializados (operarios)</div>')
 ```
 
@@ -931,7 +930,7 @@ print('<div class="stat-desc">más ganan los hombres en oficios especializados (
 
 ```{python}
 #| output: asis
-print(f'<div class="stat-value red" data-count="{brecha_di_pct}" data-suf="%">0</div>')
+print(f'<div class="stat-value red">{brecha_di_pct}%</div>')
 print('<div class="stat-desc">más ganan los hombres como directivos — el puesto más alto</div>')
 ```
 
@@ -941,7 +940,7 @@ print('<div class="stat-desc">más ganan los hombres como directivos — el pues
 
 ```{python}
 #| output: asis
-print(f'<div class="stat-value green" data-count="{g_el.razon:.2f}" data-suf="x">0</div>')
+print(f'<div class="stat-value green">{g_el.razon:.2f}x</div>')
 print('<div class="stat-desc">razón hombre/mujer en ocupaciones elementales — paridad casi exacta</div>')
 ```
 
@@ -986,7 +985,7 @@ Y **26 de los 32 estados también redujeron su pobreza** en la misma década. El
 
 ```{python}
 #| output: asis
-print(f'<div class="stat-value green" data-count="{n_esc_up}">0</div>')
+print(f'<div class="stat-value green">{n_esc_up}</div>')
 print('<div class="stat-desc">de 32 estados ganaron escolaridad promedio 2010–2020</div>')
 ```
 
@@ -996,7 +995,7 @@ print('<div class="stat-desc">de 32 estados ganaron escolaridad promedio 2010–
 
 ```{python}
 #| output: asis
-print(f'<div class="stat-value green" data-count="{n_pob_down}">0</div>')
+print(f'<div class="stat-value green">{n_pob_down}</div>')
 print('<div class="stat-desc">de 32 estados redujeron su pobreza en la misma década</div>')
 ```
 
@@ -1006,7 +1005,7 @@ print('<div class="stat-desc">de 32 estados redujeron su pobreza en la misma dé
 
 ```{python}
 #| output: asis
-print(f'<div class="stat-value amber" data-count="{avg_delta_esc:.2f}" data-suf=" años">0</div>')
+print(f'<div class="stat-value amber">{avg_delta_esc:.2f} años</div>')
 print('<div class="stat-desc">Ganancia promedio de escolaridad por estado — INEGI Censo 2020</div>')
 ```
 
@@ -1170,58 +1169,3 @@ No afirmamos causalidad: los datos son observacionales. Sí afirmamos dirección
 :::
 
 ::::
-
-```{=html}
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  /* ── Scroll-triggered visibility ── */
-  const obs = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        e.target.querySelectorAll('[data-count]').forEach(countUp);
-      }
-    });
-  }, { threshold: 0.12, rootMargin: '0px 0px -80px 0px' });
-
-  document.querySelectorAll(
-    '.fade-in,.scale-in,.slide-left,.slide-right,.blur-in,.chart-reveal,.stat-cards,.cycle-diagram'
-  ).forEach(el => obs.observe(el));
-
-  /* ── Counter animation (ease-out-quint) ── */
-  function countUp(el) {
-    if (el.dataset.counted) return;
-    el.dataset.counted = '1';
-    const raw  = el.dataset.count;
-    const pre  = el.dataset.pre || '';
-    const suf  = el.dataset.suf || '';
-    const dec  = (raw.split('.')[1] || '').length;
-    const end  = parseFloat(raw);
-    const dur  = 2000;
-    const t0   = performance.now();
-    (function tick(now) {
-      const p = Math.min((now - t0) / dur, 1);
-      const v = end * (1 - Math.pow(1 - p, 5));
-      el.textContent = pre + v.toFixed(dec) + suf;
-      if (p < 1) requestAnimationFrame(tick);
-      else el.classList.add('counted');
-    })(t0);
-  }
-
-  /* ── Parallax background shift on scroll ── */
-  let ticking = false;
-  window.addEventListener('scroll', () => {
-    if (!ticking) {
-      requestAnimationFrame(() => {
-        document.querySelectorAll('[id^="s-"]').forEach(s => {
-          const r = s.getBoundingClientRect();
-          s.style.backgroundPositionY = 'calc(50% + ' + (r.top * 0.06) + 'px)';
-        });
-        ticking = false;
-      });
-      ticking = true;
-    }
-  });
-});
-</script>
-```

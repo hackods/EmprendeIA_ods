@@ -819,3 +819,41 @@ main, main.content {
 }
 .act-label.green { color: #10b981; }
 .act-label.blue  { color: #3b82f6; }
+
+/* ═══════════════════════════════════════
+   T6 COMPLIANCE — sin JavaScript
+   Los estados ocultos definidos arriba
+   (.fade-in, .slide-*, .blur-in, .scale-in,
+   .chart-reveal, .stat-cards, .cycle-diagram)
+   dependían del JS para alternar a `.visible`.
+   Sin JS, todo debe estar visible por defecto.
+   Añadimos animación CSS-only en cascada al
+   cargar para preservar sensación de entrada.
+   ═══════════════════════════════════════ */
+
+@keyframes emprendeia-reveal {
+  0%   { opacity: 0; transform: translateY(24px) scale(0.98); filter: blur(4px); }
+  60%  { opacity: 1; filter: blur(0); }
+  100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .fade-in, .slide-left, .slide-right, .blur-in, .scale-in,
+  .chart-reveal, .stat-cards, .cycle-diagram {
+    animation: emprendeia-reveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .d1 { animation-delay: 0.15s; }
+  .d2 { animation-delay: 0.30s; }
+  .d3 { animation-delay: 0.45s; }
+}
+
+/* Forzar estado final visible — sobreescribe los `!important` opacity:0
+   y transform de las reglas definidas arriba (.fade-in, .slide-left, etc).
+   Necesario porque sin JS nunca se añadiría la clase .visible. */
+.fade-in, .slide-left, .slide-right, .blur-in, .scale-in, .chart-reveal,
+.stat-cards, .cycle-diagram {
+  opacity: 1 !important;
+  transform: none !important;
+  filter: none !important;
+  clip-path: none !important;
+}
