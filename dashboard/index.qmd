@@ -1,18 +1,15 @@
 ---
 title: "No es milagro"
-subtitle: "Cómo 4 estados de México rompieron el ciclo de pobreza, educación y empleo — y qué falta para que sean 32."
+subtitle: "Cómo 4 estados de México rompieron el ciclo de pobreza, educación y empleo"
+author: "EmprendeIA · HackODS UNAM 2026"
 format:
   dashboard:
-    theme: [darkly, landing.scss]
-    scrolling: true
-    embed-resources: false
-    expandable: false
-    nav-buttons: []
+    theme: darkly
+    nav-buttons: [github]
 lang: es
 execute:
   echo: false
   warning: false
-  cache: false
 ---
 
 ```{python}
@@ -515,747 +512,266 @@ for h in heroes:
     )
 ```
 
-<!-- ═══════════════════════════════════════ -->
-<!-- HERO                                    -->
-<!-- ═══════════════════════════════════════ -->
 
-::::{.hero #s-hero}
-:::{.hero-label .fade-in}
-HackODS UNAM 2026 · EmprendeIA
-:::
+# 🔴 Problema
 
-<h1 class="blur-in d1" style="font-size:clamp(3rem,7vw,6rem); font-weight:700; color:#f0f6fc; line-height:1.05; letter-spacing:-0.03em; margin:0 0 1.5rem 0;">No es <span class="accent">milagro.</span></h1>
-
-:::{.hero-sub .fade-in .d2}
-Entre 2010 y 2020, los 32 estados de México subieron en escolaridad. Cuatro rompieron el ciclo. Esta es la historia de cómo lo hicieron — y qué falta para que sean 32.
-:::
-
-:::{.hero-tags .fade-in .d3}
-[ODS 1 · Sin Pobreza]{.hero-tag}
-[ODS 4 · Educación de Calidad]{.hero-tag}
-[ODS 8 · Trabajo Decente]{.hero-tag}
-:::
-
-<div class="scroll-hint"></div>
-::::
-
-<!-- ═══════════════════════════════════════ -->
-<!-- DASHBOARD SUMMARY — Hallazgos clave ODS 1/4/8 -->
-<!-- Rubric A3 (curva de entrada) + P1 (contexto) -->
-<!-- ═══════════════════════════════════════ -->
-
-## Row {.dashboard-summary height="auto"}
+## Row {height="22%"}
 
 ```{python}
 #| content: valuebox
-#| title: "ODS 1 · La palanca medible"
-dict(
-  icon  = "bullseye",
-  color = "danger",
-  value = f"r ≈ {r_ext:.1f}"
-)
+#| title: "ODS 1 · Pobreza en Chiapas"
+dict(icon="house-exclamation", color="danger", value=f"{pob_chiapas:.0f}%")
 ```
 
 ```{python}
 #| content: valuebox
-#| title: "ODS 4 · Brecha educativa"
-dict(
-  icon  = "mortarboard",
-  color = "warning",
-  value = f"{brecha_anos:.1f} años"
-)
+#| title: "ODS 4 · Rezago educativo nacional"
+dict(icon="mortarboard", color="warning", value="25.1 M")
 ```
 
 ```{python}
 #| content: valuebox
-#| title: "ODS 8 · Desocupación juvenil"
-dict(
-  icon  = "people",
-  color = "primary",
-  value = f"{ratio_juv_2019:.1f}x"
-)
+#| title: "ODS 8 · Piso salarial"
+dict(icon="currency-exchange", color="primary", value=f"${sal_elem:.0f}/hr")
 ```
 
 ```{python}
 #| content: valuebox
-#| title: "Movilidad 2010–2020"
-dict(
-  icon  = "graph-up-arrow",
-  color = "success",
-  value = f"{len(heroes)} estados"
-)
+#| title: "Brecha directivos/elementales"
+dict(icon="graph-up", color="secondary", value=f"{brecha_x}x")
 ```
 
-<!-- ═══════════════════════════════════════ -->
-<!-- SECTION 1: EL MANTRA                    -->
-<!-- ═══════════════════════════════════════ -->
+## Row {height="38%"}
 
-::::{.landing-section #s-mantra}
-:::{.section-inner}
+::: {.card title="La historia de Luis"}
+**Luis tiene 18 años.** Nació en Chiapas, terminó la secundaria, y necesita trabajar.
 
-:::{.section-title .fade-in}
-Todos conocemos a un Luis.
+Su mamá le dijo lo que todos en México hemos escuchado: *"estudia, para que no termines pobre."*
+
+Pero los datos cuentan otra historia. En el estado de Luis, **7 de cada 10 personas viven en pobreza** — ODS 1. El país acumula **25.1 millones con rezago educativo** — ODS 4. Y el mercado laboral le tiene reservado un piso: **$40 por hora** en ocupaciones elementales, contra **$117** para un directivo — ODS 8.
+
+**La promesa se rompe en cada eslabón.**
 :::
-
-:::{.section-body .fade-in .d1}
-Es el primo que se fue a trabajar a los 16. El vecino que vende en el tianguis desde que tienes memoria. El compañero de secundaria que un día dejó de llegar. Tu mamá te decía: *"Estudia, para que no termines como..."* y ahí insertaba el nombre de alguien que conocías.
-
-La promesa siempre fue la misma: **si te esfuerzas y estudias, sales adelante.** Este tablero es la autopsia estadística de esa promesa.
-:::
-
-:::{.stat-cards .fade-in .d2}
-
-:::{.stat-card}
 
 ```{python}
-#| output: asis
-print(f'<div class="stat-value red">{pob_chiapas:.1f}%</div>')
-print('<div class="stat-desc">Pobreza en Chiapas — el estado donde nació Luis</div>')
-```
-
-:::
-
-:::{.stat-card}
-
-```{python}
-#| output: asis
-print('<div class="stat-value amber">25.1M</div>')
-print('<div class="stat-desc">Mexicanos con rezago educativo — CONEVAL 2022</div>')
-```
-
-:::
-
-:::{.stat-card}
-
-```{python}
-#| output: asis
-print(f'<div class="stat-value green">4</div>')
-print('<div class="stat-desc">Estados que rompieron el ciclo entre 2010 y 2020</div>')
-```
-
-:::
-:::
-
-:::{.section-quote .fade-in .d3}
-La promesa se rompe en cada eslabón.
-:::
-
-:::
-::::
-
-<!-- ═══════════════════════════════════════ -->
-<!-- SECTION 2: ACTO I — EL MAPA            -->
-<!-- ═══════════════════════════════════════ -->
-
-::::{.landing-section .alt-bg #s-acto1}
-:::{.section-inner}
-
-:::{.act-label .fade-in}
-Acto I · ODS 1
-:::
-
-:::{.section-title .fade-in .d1}
-Donde naciste ya decidió tu futuro.
-:::
-
-:::{.section-body .fade-in .d2}
-Luis nació en Chiapas. No eligió nacer ahí. Nadie elige. Pero ese dato — su código postal — ya cargó los dados en su contra antes de que aprendiera a leer.
-:::
-
-:::{.chart-full .chart-reveal .d2}
-
-```{python}
+#| title: "Pobreza multidimensional por entidad (CONEVAL 2020)"
 fig_map
 ```
 
-:::
+## Row {height="40%"}
 
-:::{.split}
-
-:::{.section-body .slide-left .d2}
-En Chiapas, **3 de cada 10 personas** nunca completaron la educación que les correspondía. El CONEVAL lo mide y le pone un nombre técnico: **"rezago educativo"**.
-
-En 2020, 24.4 millones de mexicanos lo padecían. Para 2022, la cifra subió a **25.1 millones**. No está bajando. Está creciendo.
-
-Pero Luis tiene 6 años, y su mamá lo inscribió en la primaria. Todavía hay esperanza. *¿Verdad?*
-
-*Guarda esto en la mente: Chiapas de 2010 y Chiapas de 2020 no son el mismo Chiapas. Algo se movió. Volveremos a ese dato.*
-:::
-
-:::{.slide-right .d3}
 ```{python}
+#| title: "Top 5 / Bottom 5 · Pobreza por estado"
 fig_bars
 ```
-:::
-
-:::
-
-:::
-::::
-
-<!-- ═══════════════════════════════════════ -->
-<!-- SECTION 3: LA BRECHA (stat interlude)   -->
-<!-- ═══════════════════════════════════════ -->
-
-::::{.landing-section #s-brecha}
-:::{.section-inner style="text-align:center;"}
-
-:::{.blur-in}
 
 ```{python}
-#| output: asis
-print(f'<div class="stat-huge red">{brecha_anos}</div>')
-print('<div class="stat-label" style="font-size:1.3rem;">años de escolaridad separan al estado más pobre del más rico.</div>')
-print(f'<div class="stat-source" style="margin-top:1rem;">Chiapas: {esc_chiapas} años &nbsp;·&nbsp; Nuevo León: {esc_nl} años &nbsp;—&nbsp; INEGI, Censo 2020</div>')
+#| title: "Ingreso medio por hora por ocupación (INEGI ENOE 2024)"
+fig_salary
 ```
 
-:::
+# 🟡 Revelación
 
-:::{.corr-badge .fade-in .d1 style="display:inline-flex; margin-top:2rem;"}
+## Row {height="20%"}
 
 ```{python}
-#| output: asis
-print(f'<span class="corr-r">r ≈ −0.8</span>')
-print(f'<span class="corr-desc">Correlación pobreza extrema vs escolaridad (p < 10⁻⁷, n=32 estados)</span>')
+#| content: valuebox
+#| title: "Abandono escolar × pobreza"
+dict(icon="x-circle", color="secondary", value="r = −0.15")
 ```
-
-:::
-
-:::
-::::
-
-<!-- ═══════════════════════════════════════ -->
-<!-- SECTION 4: ACTO II — EL PUENTE ROTO    -->
-<!-- ═══════════════════════════════════════ -->
-
-::::{.landing-section .alt-bg #s-acto2}
-:::{.section-inner}
-
-:::{.act-label .amber .fade-in}
-Acto II · ODS 4
-:::
-
-:::{.section-title .fade-in .d1}
-El puente que se rompe a mitad del camino.
-:::
-
-:::{.split}
-
-:::{.section-body .slide-left .d2}
-Luis llegó a la secundaria. Muchos de sus amigos no.
-
-UNICEF reporta que en México, **solo 56 de cada 100 niños** que entran a primaria logran terminar la preparatoria. Los otros 44 se quedan en el camino. No se pierden — los expulsa el hambre.
-
-La prepa cuesta. No la colegiatura — cuesta el **tiempo**. Cuesta las 4 horas de camión. Cuesta el plato de comida que su mamá no tiene si él no trabaja.
-
-Un día, Luis deja de ir. No es que no le guste estudiar. Es que **su familia necesita que deje de hacerlo.**
-
-**Luis no abandonó la escuela. La escuela nunca le llegó tan lejos.** La pregunta no es por qué algunos caen — es **por qué algunos no.**
-:::
-
-:::{.slide-right .d3}
-```{python}
-fig_dropout
-```
-:::
-
-:::
-
-:::
-::::
-
-<!-- ═══════════════════════════════════════ -->
-<!-- SECTION 4b: STAT INTERLUDE — 56 de 100  -->
-<!-- ═══════════════════════════════════════ -->
-
-::::{.landing-section #s-56}
-:::{.section-inner style="text-align:center;"}
-
-:::{.blur-in}
-<div class="stat-huge amber"><span>56</span> de 100</div>
-<div class="stat-label" style="font-size:1.3rem;">niños que entran a primaria terminan la preparatoria.</div>
-<div class="stat-source" style="margin-top:1rem;">UNICEF, Country Office Annual Report México 2023</div>
-:::
-
-:::
-::::
-
-<!-- ═══════════════════════════════════════ -->
-<!-- SECTION 4c: SCATTER (P3 FIX: own section) -->
-<!-- ═══════════════════════════════════════ -->
-
-::::{.landing-section .alt-bg #s-scatter}
-:::{.section-inner}
-
-:::{.section-body .fade-in style="max-width:700px;"}
-El CONEVAL documenta que el **36.7%** de los mexicanos mayores de 22 años no completaron la preparatoria. Luis acaba de unirse a esa estadística. Cuando cruzamos pobreza extrema con escolaridad en los 32 estados, aparece una línea casi recta:
-:::
-
-:::{.chart-full .chart-reveal .d1}
 
 ```{python}
-fig_scatter
+#| content: valuebox
+#| title: "Pobreza extrema × escolaridad"
+dict(icon="check-circle", color="danger", value="r ≈ −0.8")
 ```
-
-:::
-
-:::{.corr-badge .fade-in .d2}
 
 ```{python}
-#| output: asis
-print(f'<span class="corr-r">r ≈ −0.8</span>')
-print('<span class="corr-desc">A mayor pobreza extrema, menor escolaridad promedio — 32 estados, p < 10⁻⁷</span>')
+#| content: valuebox
+#| title: "Brecha Chiapas vs Nuevo León"
+dict(icon="rulers", color="warning", value=f"{brecha_anos:.2f} años")
 ```
 
-:::
+## Row {height="40%"}
 
-:::{.section-body .fade-in .d2 style="margin-top:2rem; max-width:700px;"}
-Y aquí lo contraintuitivo: **en México, la educación no saca de la pobreza. Es al revés — bajar la pobreza produce educación.**
+::: {.card title="El pivote metodológico"}
+**En México, la educación no saca de la pobreza. Es al revés — bajar la pobreza produce educación.**
 
-Lo probamos con la métrica estándar. La **tasa de abandono escolar** — lo que reporta la SEP cada año — **no correlaciona con pobreza**: r = −0.15, estadísticamente nulo. En cambio, la pobreza extrema **sí predice los años de escolaridad**, con r ≈ −0.8.
+Cruzamos los 32 estados con **CONEVAL e INEGI Censo 2020**. La hipótesis obvia —"los jóvenes abandonan la escuela porque son pobres"— **no se sostuvo**. La **tasa de abandono escolar** (la métrica que reporta la SEP cada año) **no correlaciona con pobreza**: r = −0.15, estadísticamente nulo.
+
+Pero la **pobreza extrema sí predice los años de escolaridad**, con r ≈ −0.8 (p < 10⁻⁷). Entre Chiapas y Nuevo León hay **tres años completos de escolaridad** de diferencia.
+
+**Luis no abandonó la escuela. La escuela nunca le llegó tan lejos.**
 
 Estamos midiendo lo que no importa. El indicador correcto ya estaba en los datos — solo había que mirarlo.
 :::
 
-:::{.section-body .fade-in .d3 style="margin-top:1.5rem; max-width:700px;"}
-La OCDE, en su evaluación de México de febrero 2026, lo dice sin rodeos: la informalidad del **56%** del país está directamente ligada a que los jóvenes no terminan su educación. Pero la recomendación llega tarde para Luis.
-:::
-
-:::
-::::
-
-<!-- ═══════════════════════════════════════ -->
-<!-- SECTION 6: ACTO III — LA CONDENA       -->
-<!-- ═══════════════════════════════════════ -->
-
-::::{.landing-section .alt-bg #s-acto3}
-:::{.section-inner}
-
-:::{.act-label .purple .fade-in}
-Acto III · ODS 8
-:::
-
-:::{.section-title .fade-in .d1}
-Bienvenido al piso de abajo.
-:::
-
-:::{.split}
-
-:::{.section-body .slide-left .d2}
+## Row {height="40%"}
 
 ```{python}
-#| output: asis
-print(f'<div class="stat-huge red" style="font-size:5rem;">${sal_elem:.0f}</div>')
-print('<div class="stat-label">pesos por hora. Ese es el precio de no tener preparatoria.</div>')
+#| title: "Pobreza extrema × escolaridad promedio — 32 estados"
+fig_scatter
 ```
 
-Luis tiene 18 años, secundaria terminada, y necesita comer. El mercado laboral mexicano tiene un piso reservado para él: **ocupaciones elementales** — limpieza, carga, trabajo manual sin especialización.
-
-Arriba de Luis, los profesionistas ganan **$109/hr**. Los directivos, **$117/hr**. Luis tendría que trabajar **3 horas** para ganar lo que un directivo gana en una.
-:::
-
-:::{.slide-right .d3}
 ```{python}
-fig_salary
+#| title: "Tasa de abandono escolar nacional 2024 (SEP)"
+fig_dropout
 ```
-:::
 
-:::
+# 👥 Por dentro
 
-:::{.section-body .fade-in .d3 style="margin-top:2rem;"}
-Entre 2016 y 2024, la brecha salarial absoluta entre directivos y trabajadores elementales creció de $57 a **$83 pesos por hora**. El piso no se está acercando al techo. **Se está alejando.**
-
-Y aquí viene lo peor: con $40 la hora, Luis no puede pagar la renta, la comida, y además ahorrar para que su hija vaya a la escuela. **El ciclo se reinicia.**
-:::
-
-:::
-::::
-
-<!-- ═══════════════════════════════════════ -->
-<!-- ACTO III.b — ODS 8: DENTRO DEL TRABAJO -->
-<!-- Desocupación juvenil + brecha de género-->
-<!-- ═══════════════════════════════════════ -->
-
-::::{.landing-section #s-ods8}
-:::{.section-inner}
-
-:::{.act-label .amber .fade-in}
-ODS 8 · Dentro del trabajo
-:::
-
-:::{.section-title .fade-in .d1}
-Los rostros detrás del promedio.
-:::
-
-:::{.section-body .fade-in .d2 style="max-width:720px;"}
-El salario promedio esconde dos realidades que la política pública suele agregar y olvidar. El mercado laboral mexicano trata distinto a **los que entran** (jóvenes) y a **los que suben** (género). Luis vive la primera desigualdad ahora; la segunda le esperará si logra escalar.
-:::
-
-<!-- ── SUBSECCIÓN A: Desocupación juvenil ── -->
-
-:::{.section-subtitle .fade-in .d2 style="margin-top:3rem; font-size:1.5rem; color:#f59e0b; font-weight:600;"}
-Por cada adulto sin trabajo, dos jóvenes.
-:::
-
-:::{.section-body .fade-in .d2 style="max-width:720px;"}
-Luis tiene 18 años. Antes de preguntar cuánto va a ganar, hay una pregunta más dura: **¿le van a dar trabajo?** Desde hace quince años, la desocupación juvenil nacional duplica la de los adultos — sin excepción, sin importar el ciclo económico.
-:::
-
-:::{.chart-full .chart-reveal .d2}
+## Row {height="22%"}
 
 ```{python}
+#| content: valuebox
+#| title: "Desocupación juvenil 15–24 (ENOE 2019)"
+dict(icon="person-exclamation", color="warning", value=f"{desoc_juv_2019}%")
+```
+
+```{python}
+#| content: valuebox
+#| title: "Ratio juvenil/adulta"
+dict(icon="arrow-up", color="warning", value=f"{ratio_juv_2019}x")
+```
+
+```{python}
+#| content: valuebox
+#| title: "Brecha género en operarios"
+dict(icon="gender-male", color="danger", value=f"+{brecha_op_pct}%")
+```
+
+```{python}
+#| content: valuebox
+#| title: "Paridad salarial en elementales"
+dict(icon="gender-ambiguous", color="success", value=f"{g_el.razon:.2f}x")
+```
+
+## Row {height="38%"}
+
+::: {.card title="Dos rostros que el promedio esconde"}
+El mercado laboral mexicano trata distinto a **los que entran** (jóvenes) y a **los que suben** (género).
+
+**Por cada adulto sin trabajo, dos jóvenes.** Desde hace quince años, la desocupación juvenil duplica la de adultos — sin excepción, sin importar el ciclo económico. En Chiapas la desocupación juvenil parece "baja" (5.8%), pero es porque los jóvenes caen directo a la **informalidad** antes de aparecer como "desocupados". Misma estadística, dos historias opuestas.
+
+**El piso es plano. La escalera no lo es.** En ocupaciones elementales, hombres y mujeres ganan casi lo mismo ($39 vs $40 por hora). La desigualdad aparece al subir: directivos **+19%** para ellos, profesionistas **+20%**, operarios especializados **+51%**.
+:::
+
+## Row {height="40%"}
+
+```{python}
+#| title: "Desocupación nacional total vs jóvenes 15–24 (ENOE 2005–2019)"
 fig_youth
 ```
 
-:::
-
-:::{.stat-cards .fade-in .d3}
-
-:::{.stat-card}
-
 ```{python}
-#| output: asis
-print(f'<div class="stat-value amber">{ratio_juv_2019}x</div>')
-print('<div class="stat-desc">más desocupación entre jóvenes 15-24 que entre adultos — ENOE 2019</div>')
-```
-
-:::
-
-:::{.stat-card}
-
-```{python}
-#| output: asis
-print(f'<div class="stat-value amber">{desoc_juv_2019}%</div>')
-print('<div class="stat-desc">desocupación juvenil nacional 2019 — ONU indicador 8.5.2</div>')
-```
-
-:::
-
-:::{.stat-card}
-
-```{python}
-#| output: asis
-print(f'<div class="stat-value red">56%</div>')
-print('<div class="stat-desc">informalidad laboral en México — OCDE 2026</div>')
-```
-
-:::
-:::
-
-```{python}
-#| output: asis
-print('<div class="section-body fade-in d3" style="max-width:720px; margin-top:2rem;">')
-print(f'Y hay una paradoja cruel en el mapa: en <b>Chiapas</b>, la desocupación juvenil es baja ({juv_chiapas:.1f}%) — no porque haya trabajo digno, sino porque los jóvenes caen directo a la <b>informalidad</b> antes de aparecer como "desocupados". En <b>Nuevo León</b>, es {juv_nl:.1f}% — los jóvenes de un estado rico pueden darse el lujo de esperar un empleo formal. La misma estadística, dos historias opuestas.')
-print('<br><br><b>Luis no es un desocupado. Es parte del 56% de la informalidad.</b> El ciclo de ODS 8 comenzó antes de que entrara al mercado formal.')
-print('<br><br><span style="color:#6e7681; font-size:0.9rem;">Fuente: INEGI ENOE 2005–2019 (serie nacional) e INEGI ENOE 2019 (estatal). Informalidad: OCDE Economic Survey México 2026.</span>')
-print('</div>')
-```
-
-<!-- ── SUBSECCIÓN B: Brecha de género por ocupación ── -->
-
-:::{.section-subtitle .fade-in .d3 style="margin-top:5rem; font-size:1.5rem; color:#f59e0b; font-weight:600;"}
-Y si logra subir — el piso es plano, la escalera no.
-:::
-
-:::{.section-body .fade-in .d3 style="max-width:720px;"}
-Donde Luis trabaja — ocupaciones elementales, servicios, agricultura — hombres y mujeres ganan casi lo mismo. El piso del mercado laboral está nivelado. Pero la brecha de género **no está en el sótano** — aparece en cuanto hay especialización o poder de decisión.
-:::
-
-:::{.chart-full .chart-reveal .d3}
-
-```{python}
+#| title: "Ingreso por hora · hombres vs mujeres, por ocupación (ENOE 2024)"
 fig_gender
 ```
 
-:::
+# 🟢 Solución
 
-:::{.stat-cards .fade-in .d3}
-
-:::{.stat-card}
+## Row {height="22%"}
 
 ```{python}
-#| output: asis
-print(f'<div class="stat-value red">{brecha_op_pct}%</div>')
-print('<div class="stat-desc">más ganan los hombres en oficios especializados (operarios)</div>')
+#| content: valuebox
+#| title: "Estados que ganaron escolaridad 2010–2020"
+dict(icon="trophy", color="success", value=f"{n_esc_up} / 32")
 ```
 
-:::
-
-:::{.stat-card}
-
 ```{python}
-#| output: asis
-print(f'<div class="stat-value red">{brecha_di_pct}%</div>')
-print('<div class="stat-desc">más ganan los hombres como directivos — el puesto más alto</div>')
+#| content: valuebox
+#| title: "Estados que redujeron pobreza"
+dict(icon="arrow-down-circle", color="success", value=f"{n_pob_down} / 32")
 ```
 
-:::
-
-:::{.stat-card}
-
 ```{python}
-#| output: asis
-print(f'<div class="stat-value green">{g_el.razon:.2f}x</div>')
-print('<div class="stat-desc">razón hombre/mujer en ocupaciones elementales — paridad casi exacta</div>')
+#| content: valuebox
+#| title: "Estados que rompieron el ciclo"
+dict(icon="stars", color="success", value=f"{len(heroes)}")
 ```
 
-:::
-:::
-
 ```{python}
-#| output: asis
-print('<div class="section-body fade-in d3" style="max-width:720px; margin-top:2rem;">')
-print(f'En las <b>ocupaciones elementales</b>, mujeres y hombres ganan casi lo mismo (${g_el.hombres:.0f} hombres vs ${g_el.mujeres:.0f} mujeres por hora). La desigualdad aparece <b>al subir la escalera</b>: profesionistas (+{brecha_pr_pct}% para ellos), directivos (+{brecha_di_pct}%), operarios especializados (+{brecha_op_pct}%). La pregunta útil para ODS 8 no es <i>"cómo pagamos mejor el piso"</i> — es <i>"quién puede subir, y quién se queda abajo."</i>')
-print('<br><br><span style="color:#6e7681; font-size:0.9rem;">Fuente: INEGI ENOE 2024. El gráfico muestra ingreso medio por hora por ocupación y sexo; la línea conecta la brecha absoluta entre medias.</span>')
-print('</div>')
+#| content: valuebox
+#| title: "Reducción de pobreza en Zacatecas"
+dict(icon="lightning-charge", color="success", value="−16 pp")
 ```
 
-:::
-::::
-
-<!-- ═══════════════════════════════════════ -->
-<!-- ACTO IV — LOS QUE SALTARON              -->
-<!-- ═══════════════════════════════════════ -->
-
-::::{.landing-section #s-acto4}
-:::{.section-inner}
-
-:::{.act-label .green .fade-in}
-Acto IV · Movilidad
-:::
-
-:::{.section-title .fade-in .d1}
-Pero hay estados que saltaron.
-:::
-
-:::{.section-body .fade-in .d2 style="max-width:720px;"}
-Cuando miramos los datos entre **2010 y 2020**, aparece algo que nadie está contando: **los 32 estados de México subieron en escolaridad promedio**. Ni uno retrocedió. El país avanzó — aunque a velocidades muy distintas.
-
-Y **26 de los 32 estados también redujeron su pobreza** en la misma década. El ciclo no es una profecía cerrada. Es un diseño que se puede rediseñar.
-:::
-
-:::{.stat-cards .fade-in .d2}
-
-:::{.stat-card}
+## Row {height="42%"}
 
 ```{python}
-#| output: asis
-print(f'<div class="stat-value green">{n_esc_up}</div>')
-print('<div class="stat-desc">de 32 estados ganaron escolaridad promedio 2010–2020</div>')
-```
-
-:::
-
-:::{.stat-card}
-
-```{python}
-#| output: asis
-print(f'<div class="stat-value green">{n_pob_down}</div>')
-print('<div class="stat-desc">de 32 estados redujeron su pobreza en la misma década</div>')
-```
-
-:::
-
-:::{.stat-card}
-
-```{python}
-#| output: asis
-print(f'<div class="stat-value amber">{avg_delta_esc:.2f} años</div>')
-print('<div class="stat-desc">Ganancia promedio de escolaridad por estado — INEGI Censo 2020</div>')
-```
-
-:::
-:::
-
-:::{.chart-full .chart-reveal .d2}
-
-```{python}
+#| title: "Escolaridad promedio por entidad 2010 → 2020 (INEGI Censo)"
 fig_slope
 ```
 
-:::
-
-:::{.section-body .fade-in .d2 style="max-width:720px; margin-top:2rem;"}
-Cuatro estados hicieron el **doble salto** — bajaron su pobreza **y** ganaron años de escolaridad por encima del promedio: **Zacatecas, Chihuahua, Querétaro e Hidalgo**. Zacatecas lidera: redujo su pobreza **16.5 puntos porcentuales** en una sola década — de 60% a 44%.
-:::
-
-:::{.chart-full .chart-reveal .d3}
-
 ```{python}
+#| title: "Δ Pobreza × Δ Escolaridad 2010–2020 · los 4 que saltaron"
 fig_deltas
 ```
 
-:::
+## Row {height="36%"}
 
-:::{.corr-badge .fade-in .d3 style="display:inline-flex; margin-top:1rem;"}
-
-```{python}
-#| output: asis
-print(f'<span class="corr-r">r = {r_deltas:.2f}</span>')
-print(f'<span class="corr-desc">Correlación Δpobreza vs Δescolaridad 2010–2020 (p = {p_deltas:.3f}) — donde la pobreza bajó más, la escolaridad subió más</span>')
-```
-
-:::
-
-:::{.section-body .fade-in .d3 style="max-width:720px; margin-top:2rem;"}
-La correlación de los cambios es más débil que la de niveles (r ≈ −0.8) — reducir pobreza en una década es difícil y los estados partieron de puntos muy distintos. Pero **la dirección es clara y estadísticamente significativa**: los estados que más redujeron pobreza también fueron los que más ganaron escolaridad.
-
-Seis estados **subieron** su pobreza (Quintana Roo, Ciudad de México, Estado de México, Morelos, Puebla, Veracruz). La historia no es uniforme. Pero es movible.
-:::
-
-:::
-::::
-
-<!-- ═══════════════════════════════════════ -->
-<!-- ACTO V — LA PALANCA (reemplaza ciclo)  -->
-<!-- ═══════════════════════════════════════ -->
-
-::::{.landing-section .alt-bg #s-palanca}
-:::{.section-inner style="text-align:center;"}
-
-:::{.act-label .blue .fade-in}
-Acto V · La palanca
-:::
-
-:::{.section-title .fade-in .d1 style="margin-top:1rem;"}
-Lo que se mide, se mueve.
-:::
-
-:::{.section-body .fade-in .d2 style="max-width:720px; margin:0 auto 3rem;"}
-La correlación pobreza extrema × escolaridad (**r ≈ −0.8**) es una palanca de dos sentidos. Si la pobreza sube, la escolaridad cae. Si **baja, la escolaridad sube**. Zacatecas, Chihuahua, Querétaro e Hidalgo lo probaron en una década.
+::: {.card title="La palanca · cuatro acciones"}
+Entre 2010 y 2020, **ningún estado retrocedió en escolaridad**. Cuatro hicieron el doble salto: **Zacatecas, Chihuahua, Querétaro, Hidalgo**. Zacatecas bajó pobreza **16 puntos porcentuales** en una década.
 
 **No fue milagro. Lo midieron, lo planearon, lo presupuestaron.**
+
+- **Política pública** — atacar pobreza extrema mueve la escolaridad más que cualquier beca aislada.
+- **Docentes** — el predictor más fuerte del rezago no es su currícula, es el ingreso del hogar de sus alumnos.
+- **Ciudadanos** — evalúen a su gobernador por años de escolaridad ganados, no por discursos.
+- **Y nosotros, en EmprendeIA** — trabajamos en ese eslabón: apoyamos emprendimientos y empleo digno. Porque el presupuesto que rompe el ciclo, al final, es el salario de un trabajo decente.
+
+---
+
+**El ciclo se rompió cuatro veces en una década. Hay que multiplicarlo por ocho.**
+
+## No es milagro. Es presupuesto. {.text-center}
 :::
 
-:::{.cta-grid .fade-in .d2}
+# 📊 Datos
 
-:::{.cta-card .cta-policy}
-<div class="cta-icon">🏛️</div>
-<div class="cta-who">Si formulas política pública</div>
-<div class="cta-what">Atacar pobreza extrema mueve la escolaridad más que cualquier beca aislada.</div>
-<div class="cta-evidence">Evidencia: r ≈ −0.8 en niveles, Zacatecas bajó pobreza 16.5 pp y ganó 1.35 años de escolaridad en una década.</div>
-:::
+## Row {height="55%"}
 
-:::{.cta-card .cta-teacher}
-<div class="cta-icon">📚</div>
-<div class="cta-who">Si eres docente o director</div>
-<div class="cta-what">El predictor más fuerte del rezago de tu aula no es la currícula — es el ingreso del hogar.</div>
-<div class="cta-evidence">Evidencia: rezago educativo × escolaridad estatal, r = −0.94, p < 10⁻¹⁵.</div>
-:::
-
-:::{.cta-card .cta-citizen}
-<div class="cta-icon">🗳️</div>
-<div class="cta-who">Si eres ciudadano</div>
-<div class="cta-what">Cuando evalúes a tu gobernador, mira un solo número: años de escolaridad ganados en una década.</div>
-<div class="cta-evidence">Evidencia: los 32 estados ganaron escolaridad 2010–2020 — pero a velocidades muy distintas.</div>
-:::
-
-:::{.cta-card .cta-emprendeia}
-<div class="cta-icon">🚀</div>
-<div class="cta-who">Y nosotros, en EmprendeIA</div>
-<div class="cta-what">Trabajamos en ese eslabón: apoyamos emprendimientos y empleo digno en México.</div>
-<div class="cta-evidence">Porque el presupuesto que rompe el ciclo, al final, es el salario de un trabajo decente.</div>
-:::
-
-:::
-
-:::{.section-title .blur-in .d3 style="margin-top:5rem; font-size:clamp(2.5rem, 6vw, 5rem);"}
-No es milagro.
-:::
-
-:::{.section-title .blur-in .d3 style="margin-top:-0.5rem; font-size:clamp(2.5rem, 6vw, 5rem); color:#58a6ff;"}
-Es presupuesto.
-:::
-
-:::{.section-body .fade-in .d3 style="max-width:620px; margin:3rem auto 0; text-align:center; color:#8b949e;"}
-El ciclo de pobreza, educación truncada y empleo precario **se rompió cuatro veces en una década**. Ahora hay que multiplicarlo por ocho. Y los presupuestos — a diferencia de los destinos — se pueden cambiar.
-:::
-
-:::
-::::
-
-<!-- ═══════════════════════════════════════ -->
-<!-- SOURCES & FOOTER                        -->
-<!-- ═══════════════════════════════════════ -->
-
-::::{.sources-section}
-
-<h2 class="data-about-title">Sobre los datos</h2>
-
-Este tablero se construye sobre siete datasets oficiales, todos de acceso público, todos con año explícito y cobertura declarada. Reconocemos explícitamente las limitaciones de cada uno.
+::: {.card title="Sobre los datos"}
+Este tablero se construye sobre siete datasets oficiales de acceso público. Cada uno se cita con su año, cobertura y limitaciones reconocidas.
 
 | Dataset | Fuente | Año | Cobertura | Limitación reconocida |
 |---|---|---|---|---|
 | Pobreza multidimensional por entidad | CONEVAL | 2010 · 2015 · 2020 | 32 estados (n = 32) | Subregistro conocido en comunidades indígenas; medición bianual no captura shocks intra-año |
 | Pobreza extrema y rezago educativo | CONEVAL, Concentrado estatal | 2020 | 32 estados | Mismo subregistro; rezago educativo definido sobre población ≥ 22 años |
 | Grado promedio de escolaridad | INEGI, Censo de Población y Vivienda | 2010 · 2015 · 2020 | 32 estados + nacional | Autoreporte del jefe de hogar; mide años cursados, no calidad educativa |
-| Ingreso medio por hora por ocupación | INEGI, ENOE | 2016–2024 | Nacional por tipo de ocupación y sexo | No captura ingresos del sector informal completo; trabajo doméstico no remunerado queda fuera |
-| Tasa de desocupación por edad y sexo | INEGI, ENOE | 1995–2020 | 32 estados + nacional | Datos 2020+ presentan colapsos por COVID-19; análisis limitado a 2005–2019 para aislar el shock |
+| Ingreso medio por hora por ocupación | INEGI, ENOE | 2016–2024 | Nacional por ocupación y sexo | No captura ingresos del sector informal completo |
+| Tasa de desocupación por edad y sexo | INEGI, ENOE | 1995–2020 | 32 estados + nacional | Datos 2020+ con colapsos por COVID-19; análisis limitado a 2005–2019 |
 | Finalización Media Superior (56 de 100) | UNICEF, Country Office Annual Report | 2023 | Nacional | Agregado sin desagregación estatal |
 | Informalidad laboral (56%) | OCDE, Economic Survey México | 2026 | Nacional (agregado) | Sin desagregación por género ni región |
-
-Todos los archivos fuente se encuentran en `datos/ods1/`, `datos/ods4/` y `datos/ods8/`, y el pipeline de carga es reproducible con `uv run quarto render dashboard/index.qmd`.
-
-**Escala geográfica — por qué estado y no municipio.** El corte territorial es decisión deliberada, no conveniencia. Usamos **nivel estatal** por tres razones documentables:
-
-1. **Es la unidad donde se ejecuta el presupuesto de los tres ODS en México.** Las transferencias condicionadas de CONEVAL, las becas de la SEP y los programas de la STPS se asignan y rinden cuentas a 32 gobernaturas. Una recomendación de política pública que no conecte con una gobernatura no tiene destinatario.
-
-2. **Los cuatro estados que rompen el ciclo en el Acto IV — Zacatecas, Chihuahua, Querétaro, Hidalgo — son gobernaturas completas, no municipios aislados.** El mecanismo que estudiamos (presupuesto dirigido a reducir pobreza extrema → escolaridad promedio sube) opera a escala estatal porque los programas que lo producen operan a escala estatal.
-
-3. **CONEVAL 2020 a nivel municipal tiene subregistro documentado en comunidades indígenas y zonas rurales dispersas.** Bajar a municipio falsificaría la lectura del ciclo — justamente en los lugares donde el ciclo es más agudo — porque las poblaciones más afectadas son las peor contadas.
-
-Donde el dato municipal sí aporta (la paradoja Chiapas/Nuevo León en desocupación juvenil), se ancla en texto al estado: en el **Acto III · ODS 8** explicamos que la desocupación juvenil "baja" de Chiapas esconde informalidad municipal masiva — un hallazgo que no se pierde al quedarse en estado, se ilumina desde él.
-
-### Fuentes
-
-:::{.source-item}
-**CONEVAL** — Medición Multidimensional de la Pobreza en México 2020 y 2022. [coneval.org.mx/Medicion](https://www.coneval.org.mx/Medicion/MP/Documents/MMP_2022/Pobreza_multidimensional_2022.pdf)
 :::
 
-:::{.source-item}
-**INEGI** — Encuesta Nacional de Ocupación y Empleo (ENOE), Ingreso por hora por ocupación 2024. [inegi.org.mx/programas/enoe](https://www.inegi.org.mx/contenidos/saladeprensa/boletines/2025/enoe/enoe2025_11.pdf)
+## Row {height="45%"}
+
+::: {.card title="Escala geográfica · por qué estado y no municipio"}
+El corte territorial es decisión deliberada. Usamos **nivel estatal** por tres razones:
+
+1. **Es la unidad donde se ejecuta el presupuesto de los tres ODS en México.** Las transferencias condicionadas de CONEVAL, las becas de la SEP y los programas de la STPS se asignan y rinden cuentas a 32 gobernaturas.
+2. **Los cuatro estados que rompen el ciclo en el Acto IV — Zacatecas, Chihuahua, Querétaro, Hidalgo — son gobernaturas completas, no municipios aislados.** El mecanismo opera a escala estatal porque los programas que lo producen operan a escala estatal.
+3. **CONEVAL 2020 a nivel municipal tiene subregistro documentado en comunidades indígenas y zonas rurales dispersas** — justamente donde el ciclo es más agudo. Bajar a municipio falsificaría la lectura.
 :::
 
-:::{.source-item}
-**INEGI** — Grado Promedio de Escolaridad por Entidad Federativa, Censo 2020. [inegi.org.mx](https://www.inegi.org.mx)
-:::
+::: {.card title="Nota metodológica"}
+Las correlaciones se calculan sobre los 32 estados (n = 32). La correlación de niveles (pobreza extrema vs escolaridad 2020, r ≈ −0.8) es fuerte y estadísticamente significativa (p < 10⁻⁷). La correlación de cambios (Δ pobreza vs Δ escolaridad 2010–2020, r = −0.42, p = 0.016) es más débil — reducir pobreza en una década depende de políticas sostenidas.
 
-:::{.source-item}
-**SEP / INEGI** — Tasa de Abandono Escolar por Nivel Educativo 2024. [sep.gob.mx](https://www.sep.gob.mx)
-:::
+No afirmamos causalidad: los datos son observacionales. Sí afirmamos dirección: los estados que redujeron pobreza fueron también, en promedio, los que más ganaron escolaridad.
 
-:::{.source-item}
-**OCDE** — Economic Survey México 2026: informalidad laboral al 56%. [oecd.org](https://www.oecd.org/en/about/news/press-releases/2026/02/boosting-digitalisation-and-improving-education-outcomes-would-accelerate-growth-and-raise-living-standards-in-mexico.html)
-:::
+Seis estados **subieron** su pobreza (Quintana Roo, CDMX, Estado de México, Morelos, Puebla, Veracruz); el progreso no fue uniforme.
 
-:::{.source-item}
-**UNICEF** — Country Office Annual Report México 2023: solo 56 de 100 niños completan Media Superior. [unicef.org](https://www.unicef.org/media/152426/file/Mexico-2023-COAR.pdf)
-:::
+**Fuentes citadas en el tablero:**
 
-:::{.source-item}
-**El Colegio Mexiquense** — "Distribución espacial de la pobreza y rezago educativo en México". *Economía, Sociedad y Territorio*. [est.cmq.edu.mx](https://est.cmq.edu.mx/index.php/est/article/view/2156)
-:::
+- CONEVAL — Medición Multidimensional de la Pobreza en México 2020 y 2022 · [coneval.org.mx](https://www.coneval.org.mx/Medicion/MP/Documents/MMP_2022/Pobreza_multidimensional_2022.pdf)
+- INEGI · ENOE 2024 — Ingreso por hora · [inegi.org.mx/enoe](https://www.inegi.org.mx/contenidos/saladeprensa/boletines/2025/enoe/enoe2025_11.pdf)
+- INEGI · Censo 2020 — Grado promedio de escolaridad
+- OCDE — Economic Survey México 2026 — informalidad 56% · [oecd.org](https://www.oecd.org/en/about/news/press-releases/2026/02/boosting-digitalisation-and-improving-education-outcomes-would-accelerate-growth-and-raise-living-standards-in-mexico.html)
+- UNICEF — Country Office Annual Report México 2023 · [unicef.org](https://www.unicef.org/media/152426/file/Mexico-2023-COAR.pdf)
+- El Colegio Mexiquense — "Distribución espacial de pobreza y rezago educativo" · [est.cmq.edu.mx](https://est.cmq.edu.mx/index.php/est/article/view/2156)
 
-:::{.source-item}
-**World Bank / UNICEF** — The State of Global Learning Poverty 2022. [unicef.org](https://www.unicef.org/media/122921/file/StateofLearningPoverty2022.pdf)
-:::
+Repositorio: [github.com/alejandro14-hub/EmprendeIA_ods](https://github.com/alejandro14-hub/EmprendeIA_ods)
 
-### Datos Abiertos
-
-:::{.source-item}
-Todos los datasets utilizados son de acceso público. Repositorio: [github.com/alejandro14-hub/EmprendeIA_ods](https://github.com/alejandro14-hub/EmprendeIA_ods)
-:::
-
-### Nota metodológica
-
-:::{.source-item}
-Las correlaciones se calculan sobre los 32 estados (n = 32). La correlación de niveles (pobreza extrema vs escolaridad 2020, r ≈ −0.8) es fuerte y estadísticamente significativa (p < 10⁻⁷). La correlación de cambios (Δpobreza vs Δescolaridad 2010–2020, r = −0.42, p = 0.016) es más débil — reducir pobreza en una década depende de políticas sostenidas, no solo de voluntad.
-
-No afirmamos causalidad: los datos son observacionales. Sí afirmamos dirección: los estados que redujeron pobreza fueron también, en promedio, los que más ganaron escolaridad. Seis estados subieron su pobreza (Quintana Roo, Ciudad de México, Estado de México, Morelos, Puebla, Veracruz); el progreso no fue uniforme.
-:::
-
-:::{.footer-credit}
 **EmprendeIA** · Alejandro Saldaña · Eduardo Peñaloza · Tetsu Osnaya · HackODS UNAM 2026
 :::
-
-::::
