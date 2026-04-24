@@ -262,6 +262,81 @@ fig_dropout.update_layout(yaxis_title='Tasa de Abandono Nacional %',
                           margin=dict(t=10, b=10, l=10, r=10))
 
 # ══════════════════════════════════════════
+# I5 — Brecha de género por ocupación (ENOE 2024)
+# ══════════════════════════════════════════
+OCUP_LABELS = {
+    'Directores_y_gerentes':                      'Directivos',
+    'Profesionales_científicos_e_intelectuales':  'Profesionistas',
+    'Técnicos_y_profesionales_de_nivel_medio':    'Técnicos',
+    'Trabajadores_de_los_servicios_y_vendedores_de_comercios_y_mercados': 'Servicios',
+    'Oficiales,_operarios_y_artesanos_de_artes_mecánicas_y_de_otros_oficios': 'Operarios',
+    'Operadores_de_instalaciones_y_máquinas_y_ensambladores': 'Operadores',
+    'Agricultores_y_trabajadores_calificados_agropecuarios,_forestales_y_pesqueros': 'Agricultores',
+    'Ocupaciones_elementales':                    'Elementales',
+}
+d24 = df_sal_raw[df_sal_raw['Periodo'] == 2024].iloc[0]
+gender_rows = []
+for key, label in OCUP_LABELS.items():
+    h = d24.get(f'Sexo|Hombres_Tipo_de_ocupación|{key}')
+    m = d24.get(f'Sexo|Mujeres_Tipo_de_ocupación|{key}')
+    if pd.notna(h) and pd.notna(m):
+        gender_rows.append({
+            'ocupacion': label,
+            'hombres':   round(float(h), 2),
+            'mujeres':   round(float(m), 2),
+            'brecha':    round(float(h) - float(m), 2),
+            'razon':     round(float(h) / float(m), 2) if float(m) != 0 else None,
+        })
+df_gender = pd.DataFrame(gender_rows)
+df_gender = df_gender.sort_values('brecha', ascending=True).reset_index(drop=True)
+
+# Anclas narrativas (calculadas, no hardcodeadas)
+g_op = df_gender[df_gender['ocupacion'] == 'Operarios'].iloc[0]
+g_el = df_gender[df_gender['ocupacion'] == 'Elementales'].iloc[0]
+g_di = df_gender[df_gender['ocupacion'] == 'Directivos'].iloc[0]
+g_pr = df_gender[df_gender['ocupacion'] == 'Profesionistas'].iloc[0]
+brecha_op_pct = round((g_op['razon'] - 1) * 100)
+brecha_di_pct = round((g_di['razon'] - 1) * 100)
+brecha_pr_pct = round((g_pr['razon'] - 1) * 100)
+
+# ── FIG 8: Dumbbell chart brecha de género por ocupación 2024 ──
+fig_gender = go.Figure()
+# Línea conector (la brecha)
+for _, rr in df_gender.iterrows():
+    line_color = C_RED if rr['brecha'] > 1 else (C_GREEN if rr['brecha'] < -0.5 else C_DIM)
+    fig_gender.add_trace(go.Scatter(
+        x=[rr['mujeres'], rr['hombres']], y=[rr['ocupacion'], rr['ocupacion']],
+        mode='lines', line=dict(color=line_color, width=4),
+        showlegend=False, hoverinfo='skip',
+    ))
+# Punto Mujeres y Hombres
+fig_gender.add_trace(go.Scatter(
+    x=df_gender['mujeres'], y=df_gender['ocupacion'],
+    mode='markers+text', name='Mujeres',
+    marker=dict(size=14, color='#ec4899', line=dict(width=1.5, color='white')),
+    text=[f'${v:.0f}' for v in df_gender['mujeres']],
+    textposition='middle left', textfont=dict(size=11, color='#ec4899'),
+    hovertemplate='<b>%{y}</b><br>Mujeres: $%{x:.2f}/hr<extra></extra>',
+))
+fig_gender.add_trace(go.Scatter(
+    x=df_gender['hombres'], y=df_gender['ocupacion'],
+    mode='markers+text', name='Hombres',
+    marker=dict(size=14, color='#3b82f6', line=dict(width=1.5, color='white')),
+    text=[f'${v:.0f}' for v in df_gender['hombres']],
+    textposition='middle right', textfont=dict(size=11, color='#3b82f6'),
+    hovertemplate='<b>%{y}</b><br>Hombres: $%{x:.2f}/hr<extra></extra>',
+))
+style(fig_gender, h=460)
+fig_gender.update_layout(
+    xaxis_title='Ingreso por hora trabajada (MXN, 2024)',
+    yaxis_title='',
+    margin=dict(t=20, b=50, l=120, r=80),
+    legend=dict(orientation='h', yanchor='top', y=-0.12, xanchor='center', x=0.5,
+                font=dict(color='#c9d1d9', size=12), bgcolor='rgba(0,0,0,0)'),
+)
+fig_gender.update_xaxes(showgrid=False, range=[20, 140])
+
+# ══════════════════════════════════════════
 # ACTO IV — LOS QUE SALTARON (2010 → 2020)
 # ══════════════════════════════════════════
 # Escolaridad longitudinal
@@ -650,8 +725,6 @@ print('<div class="stat-label">pesos por hora. Ese es el precio de no tener prep
 Luis tiene 18 años, secundaria terminada, y necesita comer. El mercado laboral mexicano tiene un piso reservado para él: **ocupaciones elementales** — limpieza, carga, trabajo manual sin especialización.
 
 Arriba de Luis, los profesionistas ganan **$109/hr**. Los directivos, **$117/hr**. Luis tendría que trabajar **3 horas** para ganar lo que un directivo gana en una.
-
-Y hay otro piso debajo del piso: en las mismas ocupaciones elementales, los hombres ganan más por hora que las mujeres. El sótano tiene género.
 :::
 
 :::{.slide-right .d3}
@@ -667,6 +740,78 @@ Entre 2016 y 2024, la brecha salarial absoluta entre directivos y trabajadores e
 
 Y aquí viene lo peor: con $40 la hora, Luis no puede pagar la renta, la comida, y además ahorrar para que su hija vaya a la escuela. **El ciclo se reinicia.**
 :::
+
+:::
+::::
+
+<!-- ═══════════════════════════════════════ -->
+<!-- ACTO III.b — EL PISO ES PLANO, LA       -->
+<!-- ESCALERA NO (brecha de género)          -->
+<!-- ═══════════════════════════════════════ -->
+
+::::{.landing-section #s-genero}
+:::{.section-inner}
+
+:::{.act-label .amber .fade-in}
+Acto III · Género
+:::
+
+:::{.section-title .fade-in .d1}
+El piso es plano. La escalera no lo es.
+:::
+
+:::{.section-body .fade-in .d2 style="max-width:720px;"}
+Donde Luis trabaja — ocupaciones elementales, servicios, agricultura — hombres y mujeres ganan casi lo mismo. El piso del mercado laboral mexicano está nivelado. Pero la brecha de género **no está en el sótano** — aparece en cuanto hay especialización o poder de decisión.
+:::
+
+:::{.chart-full .chart-reveal .d2}
+
+```{python}
+fig_gender
+```
+
+:::
+
+:::{.stat-cards .fade-in .d3}
+
+:::{.stat-card}
+
+```{python}
+#| output: asis
+print(f'<div class="stat-value red" data-count="{brecha_op_pct}" data-suf="%">0</div>')
+print('<div class="stat-desc">más ganan los hombres en oficios especializados (operarios)</div>')
+```
+
+:::
+
+:::{.stat-card}
+
+```{python}
+#| output: asis
+print(f'<div class="stat-value red" data-count="{brecha_di_pct}" data-suf="%">0</div>')
+print('<div class="stat-desc">más ganan los hombres como directivos — el puesto más alto</div>')
+```
+
+:::
+
+:::{.stat-card}
+
+```{python}
+#| output: asis
+print(f'<div class="stat-value green" data-count="{g_el.razon:.2f}" data-suf="x">0</div>')
+print('<div class="stat-desc">razón hombre/mujer en ocupaciones elementales — paridad casi exacta</div>')
+```
+
+:::
+:::
+
+```{python}
+#| output: asis
+print('<div class="section-body fade-in d3" style="max-width:720px; margin-top:2rem;">')
+print(f'El dato cuesta acostumbrarse: en las <b>ocupaciones elementales</b>, mujeres y hombres ganan casi lo mismo (${g_el.hombres:.0f} hombres vs ${g_el.mujeres:.0f} mujeres por hora). La desigualdad aparece <b>al subir la escalera</b>: profesionistas (+{brecha_pr_pct}% para ellos), directivos (+{brecha_di_pct}%), operarios especializados (+{brecha_op_pct}%). La pregunta útil no es <i>"cómo pagamos mejor el piso"</i> — es <i>"quién puede subir, y quién se queda abajo."</i>')
+print('<br><br><span style="color:#6e7681; font-size:0.9rem;">Fuente: INEGI ENOE 2024. El gráfico muestra ingreso medio por hora por ocupación y sexo; la línea conecta la brecha absoluta entre medias.</span>')
+print('</div>')
+```
 
 :::
 ::::
