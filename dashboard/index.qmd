@@ -4,7 +4,7 @@ subtitle: "Cómo 4 estados de México rompieron el ciclo de pobreza, educación 
 author: "EmprendeIA · HackODS UNAM 2026"
 format:
   dashboard:
-    theme: [darkly, custom.scss]
+    theme: [cosmo, custom.scss]
     nav-buttons: [github]
 lang: es
 execute:
@@ -144,14 +144,14 @@ df_pob['nombre_geo'] = df_pob['estado'].map(lambda x: EQUIV_GEO.get(x, x))
 # ══════════════════════════════════════════
 def style(fig, h=500):
     fig.update_layout(
-        template='plotly_dark',
+        template='plotly_white',
         paper_bgcolor=C_BG, plot_bgcolor=C_BG,
         margin=dict(t=20, b=40, l=50, r=30),
         font=dict(family='Inter, sans-serif', size=13, color=C_GRAY),
         height=h,
     )
-    fig.update_xaxes(showgrid=False, zeroline=False, linecolor='#30363d')
-    fig.update_yaxes(showgrid=False, zeroline=False, linecolor='#30363d')
+    fig.update_xaxes(showgrid=False, zeroline=False, linecolor='#d1d5db')
+    fig.update_yaxes(showgrid=False, zeroline=False, linecolor='#d1d5db')
     return fig
 
 # ── FIG 1: Mapa coroplético ──
@@ -163,7 +163,7 @@ fig_map = px.choropleth(
 )
 fig_map.update_geos(fitbounds='locations', visible=False, bgcolor=C_BG)
 fig_map.update_layout(
-    paper_bgcolor=C_BG, plot_bgcolor=C_BG, template='plotly_dark',
+    paper_bgcolor=C_BG, plot_bgcolor=C_BG, template='plotly_white',
     margin=dict(r=0, t=0, l=0, b=0), height=500,
     font=dict(family='Inter, sans-serif', size=13, color=C_GRAY),
     coloraxis_colorbar=dict(title='Pobreza %', thickness=20, len=0.65, tickfont=dict(size=12))
