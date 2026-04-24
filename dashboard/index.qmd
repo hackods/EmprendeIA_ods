@@ -540,6 +540,53 @@ Entre 2010 y 2020, los 32 estados de México subieron en escolaridad. Cuatro rom
 ::::
 
 <!-- ═══════════════════════════════════════ -->
+<!-- DASHBOARD SUMMARY — Hallazgos clave ODS 1/4/8 -->
+<!-- Rubric A3 (curva de entrada) + P1 (contexto) -->
+<!-- ═══════════════════════════════════════ -->
+
+## Row {.dashboard-summary height="auto"}
+
+```{python}
+#| content: valuebox
+#| title: "ODS 1 · La palanca medible"
+dict(
+  icon  = "bullseye",
+  color = "danger",
+  value = f"r ≈ {r_ext:.1f}"
+)
+```
+
+```{python}
+#| content: valuebox
+#| title: "ODS 4 · Brecha educativa"
+dict(
+  icon  = "mortarboard",
+  color = "warning",
+  value = f"{brecha_anos:.1f} años"
+)
+```
+
+```{python}
+#| content: valuebox
+#| title: "ODS 8 · Desocupación juvenil"
+dict(
+  icon  = "people",
+  color = "primary",
+  value = f"{ratio_juv_2019:.1f}x"
+)
+```
+
+```{python}
+#| content: valuebox
+#| title: "Movilidad 2010–2020"
+dict(
+  icon  = "graph-up-arrow",
+  color = "success",
+  value = f"{len(heroes)} estados"
+)
+```
+
+<!-- ═══════════════════════════════════════ -->
 <!-- SECTION 1: EL MANTRA                    -->
 <!-- ═══════════════════════════════════════ -->
 
