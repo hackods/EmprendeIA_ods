@@ -337,6 +337,79 @@ fig_gender.update_layout(
 fig_gender.update_xaxes(showgrid=False, range=[20, 140])
 
 # ══════════════════════════════════════════
+# I5 — Desocupación juvenil nacional (ODS 8.5.2)
+# Indicador oficial ONU: desempleo por grupo de edad
+# ══════════════════════════════════════════
+df_des_raw = pd.read_csv(D8 / '8.5.2(2)_sh_es.csv', na_values=['NAN','ND'])
+df_nac = df_des_raw[df_des_raw['cvegeo'] == 0].rename(columns={
+    'Sexo|Total_Grupo_de_edad|Total':            'total',
+    'Sexo|Total_Grupo_de_edad|De_15_a_24_años':  'juvenil',
+})[['Periodo','total','juvenil']].sort_values('Periodo')
+
+# Ventana pre-COVID para aislar del shock 2020
+df_serie = df_nac[(df_nac['Periodo'] >= 2005) & (df_nac['Periodo'] <= 2019)].copy()
+
+# Anclas narrativas (calculadas)
+r19 = df_nac[df_nac['Periodo'] == 2019].iloc[0]
+desoc_total_2019  = round(float(r19['total']), 1)
+desoc_juv_2019    = round(float(r19['juvenil']), 1)
+ratio_juv_2019    = round(desoc_juv_2019 / desoc_total_2019, 1)
+
+# Paradoja territorial: Chiapas (baja juvenil por informalidad) vs NL
+df_est_2019 = df_des_raw[(df_des_raw['Periodo'] == 2019) & (df_des_raw['cvegeo'] != 0)].copy()
+df_est_2019 = df_est_2019.rename(columns={
+    'Entidad_federativa': 'estado',
+    'Sexo|Total_Grupo_de_edad|Total':            'total',
+    'Sexo|Total_Grupo_de_edad|De_15_a_24_años':  'juvenil',
+})[['estado','total','juvenil']]
+df_est_2019['estado'] = df_est_2019['estado'].str.replace('_', ' ')
+juv_chiapas = float(df_est_2019[df_est_2019['estado']=='Chiapas']['juvenil'].iloc[0])
+juv_nl      = float(df_est_2019[df_est_2019['estado']=='Nuevo León']['juvenil'].iloc[0])
+
+# ── FIG 9: línea de tiempo desocupación total vs juvenil ──
+fig_youth = go.Figure()
+fig_youth.add_trace(go.Scatter(
+    x=df_serie['Periodo'], y=df_serie['total'],
+    mode='lines+markers', name='Adultos (general)',
+    line=dict(color=C_GRAY, width=2.5),
+    marker=dict(size=7, color=C_GRAY),
+    hovertemplate='<b>%{x}</b><br>Desocupación total: %{y:.2f}%<extra></extra>',
+))
+fig_youth.add_trace(go.Scatter(
+    x=df_serie['Periodo'], y=df_serie['juvenil'],
+    mode='lines+markers', name='Jóvenes 15-24',
+    line=dict(color=C_AMBER, width=3.5),
+    marker=dict(size=9, color=C_AMBER),
+    hovertemplate='<b>%{x}</b><br>Desocupación juvenil: %{y:.2f}%<extra></extra>',
+))
+# Sombreado entre las dos líneas (la brecha visible)
+fig_youth.add_trace(go.Scatter(
+    x=pd.concat([df_serie['Periodo'], df_serie['Periodo'][::-1]]),
+    y=pd.concat([df_serie['juvenil'], df_serie['total'][::-1]]),
+    fill='toself', fillcolor='rgba(245,158,11,0.08)',
+    line=dict(color='rgba(0,0,0,0)'),
+    showlegend=False, hoverinfo='skip',
+))
+# Annotation 2019
+fig_youth.add_annotation(
+    x=2019, y=desoc_juv_2019,
+    text=f'<b>2019</b><br>{desoc_juv_2019}% jóvenes<br>vs {desoc_total_2019}% total',
+    showarrow=True, arrowhead=2, arrowsize=1, arrowwidth=1.5, arrowcolor=C_AMBER,
+    ax=-80, ay=-40, xanchor='right',
+    bgcolor='rgba(22,27,34,0.8)', bordercolor=C_AMBER, borderwidth=1, borderpad=8,
+    font=dict(size=11, color='#f0f6fc'),
+)
+style(fig_youth, h=420)
+fig_youth.update_layout(
+    xaxis_title='Año',
+    yaxis_title='Tasa de desocupación (%)',
+    legend=dict(orientation='h', yanchor='top', y=-0.15, xanchor='center', x=0.5,
+                font=dict(color='#c9d1d9', size=12), bgcolor='rgba(0,0,0,0)'),
+    margin=dict(t=20, b=60, l=60, r=30),
+)
+fig_youth.update_xaxes(dtick=2)
+
+# ══════════════════════════════════════════
 # ACTO IV — LOS QUE SALTARON (2010 → 2020)
 # ══════════════════════════════════════════
 # Escolaridad longitudinal
@@ -745,26 +818,96 @@ Y aquí viene lo peor: con $40 la hora, Luis no puede pagar la renta, la comida,
 ::::
 
 <!-- ═══════════════════════════════════════ -->
-<!-- ACTO III.b — EL PISO ES PLANO, LA       -->
-<!-- ESCALERA NO (brecha de género)          -->
+<!-- ACTO III.b — ODS 8: DENTRO DEL TRABAJO -->
+<!-- Desocupación juvenil + brecha de género-->
 <!-- ═══════════════════════════════════════ -->
 
-::::{.landing-section #s-genero}
+::::{.landing-section #s-ods8}
 :::{.section-inner}
 
 :::{.act-label .amber .fade-in}
-Acto III · Género
+ODS 8 · Dentro del trabajo
 :::
 
 :::{.section-title .fade-in .d1}
-El piso es plano. La escalera no lo es.
+Los rostros detrás del promedio.
 :::
 
 :::{.section-body .fade-in .d2 style="max-width:720px;"}
-Donde Luis trabaja — ocupaciones elementales, servicios, agricultura — hombres y mujeres ganan casi lo mismo. El piso del mercado laboral mexicano está nivelado. Pero la brecha de género **no está en el sótano** — aparece en cuanto hay especialización o poder de decisión.
+El salario promedio esconde dos realidades que la política pública suele agregar y olvidar. El mercado laboral mexicano trata distinto a **los que entran** (jóvenes) y a **los que suben** (género). Luis vive la primera desigualdad ahora; la segunda le esperará si logra escalar.
+:::
+
+<!-- ── SUBSECCIÓN A: Desocupación juvenil ── -->
+
+:::{.section-subtitle .fade-in .d2 style="margin-top:3rem; font-size:1.5rem; color:#f59e0b; font-weight:600;"}
+Por cada adulto sin trabajo, dos jóvenes.
+:::
+
+:::{.section-body .fade-in .d2 style="max-width:720px;"}
+Luis tiene 18 años. Antes de preguntar cuánto va a ganar, hay una pregunta más dura: **¿le van a dar trabajo?** Desde hace quince años, la desocupación juvenil nacional duplica la de los adultos — sin excepción, sin importar el ciclo económico.
 :::
 
 :::{.chart-full .chart-reveal .d2}
+
+```{python}
+fig_youth
+```
+
+:::
+
+:::{.stat-cards .fade-in .d3}
+
+:::{.stat-card}
+
+```{python}
+#| output: asis
+print(f'<div class="stat-value amber" data-count="{ratio_juv_2019}" data-suf="x">0</div>')
+print('<div class="stat-desc">más desocupación entre jóvenes 15-24 que entre adultos — ENOE 2019</div>')
+```
+
+:::
+
+:::{.stat-card}
+
+```{python}
+#| output: asis
+print(f'<div class="stat-value amber" data-count="{desoc_juv_2019}" data-suf="%">0</div>')
+print('<div class="stat-desc">desocupación juvenil nacional 2019 — ONU indicador 8.5.2</div>')
+```
+
+:::
+
+:::{.stat-card}
+
+```{python}
+#| output: asis
+print(f'<div class="stat-value red" data-count="56" data-suf="%">0</div>')
+print('<div class="stat-desc">informalidad laboral en México — OCDE 2026</div>')
+```
+
+:::
+:::
+
+```{python}
+#| output: asis
+print('<div class="section-body fade-in d3" style="max-width:720px; margin-top:2rem;">')
+print(f'Y hay una paradoja cruel en el mapa: en <b>Chiapas</b>, la desocupación juvenil es baja ({juv_chiapas:.1f}%) — no porque haya trabajo digno, sino porque los jóvenes caen directo a la <b>informalidad</b> antes de aparecer como "desocupados". En <b>Nuevo León</b>, es {juv_nl:.1f}% — los jóvenes de un estado rico pueden darse el lujo de esperar un empleo formal. La misma estadística, dos historias opuestas.')
+print('<br><br><b>Luis no es un desocupado. Es parte del 56% de la informalidad.</b> El ciclo de ODS 8 comenzó antes de que entrara al mercado formal.')
+print('<br><br><span style="color:#6e7681; font-size:0.9rem;">Fuente: INEGI ENOE 2005–2019 (serie nacional) e INEGI ENOE 2019 (estatal). Informalidad: OCDE Economic Survey México 2026.</span>')
+print('</div>')
+```
+
+<!-- ── SUBSECCIÓN B: Brecha de género por ocupación ── -->
+
+:::{.section-subtitle .fade-in .d3 style="margin-top:5rem; font-size:1.5rem; color:#f59e0b; font-weight:600;"}
+Y si logra subir — el piso es plano, la escalera no.
+:::
+
+:::{.section-body .fade-in .d3 style="max-width:720px;"}
+Donde Luis trabaja — ocupaciones elementales, servicios, agricultura — hombres y mujeres ganan casi lo mismo. El piso del mercado laboral está nivelado. Pero la brecha de género **no está en el sótano** — aparece en cuanto hay especialización o poder de decisión.
+:::
+
+:::{.chart-full .chart-reveal .d3}
 
 ```{python}
 fig_gender
@@ -808,7 +951,7 @@ print('<div class="stat-desc">razón hombre/mujer en ocupaciones elementales —
 ```{python}
 #| output: asis
 print('<div class="section-body fade-in d3" style="max-width:720px; margin-top:2rem;">')
-print(f'El dato cuesta acostumbrarse: en las <b>ocupaciones elementales</b>, mujeres y hombres ganan casi lo mismo (${g_el.hombres:.0f} hombres vs ${g_el.mujeres:.0f} mujeres por hora). La desigualdad aparece <b>al subir la escalera</b>: profesionistas (+{brecha_pr_pct}% para ellos), directivos (+{brecha_di_pct}%), operarios especializados (+{brecha_op_pct}%). La pregunta útil no es <i>"cómo pagamos mejor el piso"</i> — es <i>"quién puede subir, y quién se queda abajo."</i>')
+print(f'En las <b>ocupaciones elementales</b>, mujeres y hombres ganan casi lo mismo (${g_el.hombres:.0f} hombres vs ${g_el.mujeres:.0f} mujeres por hora). La desigualdad aparece <b>al subir la escalera</b>: profesionistas (+{brecha_pr_pct}% para ellos), directivos (+{brecha_di_pct}%), operarios especializados (+{brecha_op_pct}%). La pregunta útil para ODS 8 no es <i>"cómo pagamos mejor el piso"</i> — es <i>"quién puede subir, y quién se queda abajo."</i>')
 print('<br><br><span style="color:#6e7681; font-size:0.9rem;">Fuente: INEGI ENOE 2024. El gráfico muestra ingreso medio por hora por ocupación y sexo; la línea conecta la brecha absoluta entre medias.</span>')
 print('</div>')
 ```
