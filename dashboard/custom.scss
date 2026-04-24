@@ -476,7 +476,78 @@ $card-border-color: #e5e7eb;
 }
 .cierre-hero h1,
 .cierre-hero .h4 {
-  font-size: clamp(2rem, 4.5vw, 3.6rem) !important;
+  font-size: clamp(1.6rem, 3vw, 2.6rem) !important;
   font-weight: 800 !important;
   letter-spacing: -0.03em !important;
+  margin: 0.05rem 0 !important;
+}
+
+// ═══════════════════════════════════════════════════════
+// STATS BIG · datos de impacto en tab Presentación
+// Cards con números grandes + frase memorable · sin narrativa
+// ═══════════════════════════════════════════════════════
+
+.stat-card-tight .card-body {
+  padding: 0.7rem 1rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  gap: 0.35rem !important;
+}
+
+.stat-card-tight p {
+  font-size: 0.82rem;
+  color: #4b5563;
+  margin: 0 !important;
+  line-height: 1.25;
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.stat-card-tight em {
+  font-style: italic;
+  color: #111827;
+  font-weight: 500;
+  font-size: 0.95rem;
+  line-height: 1.3;
+  margin-top: 0.3rem !important;
+  display: block;
+}
+
+.stat-big {
+  display: inline-block;
+  font-size: clamp(1.3rem, 1.9vw, 1.7rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: #111827;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+// Variantes semánticas por acto
+.problema-card .stat-big { color: #991b1b; }
+.revelacion-anchor .stat-big { color: #b45309; }
+.solucion-bridge .stat-big { color: #047857; }
+
+// dim · para números estadísticamente nulos (r=-0.15)
+.stat-big.dim {
+  color: #9ca3af !important;
+  text-decoration: line-through;
+  text-decoration-color: #dc2626;
+  text-decoration-thickness: 2px;
+}
+
+// En el tab Presentación · ajustes de contenedores
+.revelacion-anchor.stat-card-tight .card-body {
+  align-items: flex-start !important;
+  text-align: left !important;
+}
+.revelacion-anchor.stat-card-tight em {
+  text-align: left;
+  font-size: 1rem;
+  color: #b45309;
+  font-weight: 600;
 }
