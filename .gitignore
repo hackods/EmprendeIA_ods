@@ -30,3 +30,8 @@ dashboard/index_files/
 
 /.quarto/
 **/*.quarto_ipynb
+
+# Local-only pitch presentation companion (auto-tab-advance con JS)
+# NO se transfiere ni se evalúa · preserva T6 en origin/main
+docs/pitch-mode.html
+pitch-mode.html
