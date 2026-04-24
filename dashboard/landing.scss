@@ -540,6 +540,43 @@ main, main.content {
   margin-bottom: 1.5rem;
 }
 
+/* "Sobre los datos" — sección que el rubric HackODS I2 pide explícita.
+   Debe destacarse, no ser una etiqueta discreta como las otras. */
+.data-about-title {
+  font-size: 1.8rem !important;
+  color: #f59e0b !important;
+  margin-top: 0 !important;
+  margin-bottom: 1rem !important;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.sources-section table {
+  width: 100%;
+  margin: 1.5rem 0 2.5rem;
+  font-size: 0.9rem;
+  color: #c9d1d9;
+  border-collapse: collapse;
+}
+.sources-section table thead th {
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 2px solid #30363d;
+  color: #8b949e;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.sources-section table tbody td {
+  padding: 0.7rem 0.75rem;
+  border-bottom: 1px solid rgba(48, 54, 61, 0.5);
+  vertical-align: top;
+  line-height: 1.45;
+}
+.sources-section table tbody tr:hover { background: rgba(139, 148, 158, 0.05); }
+
 .source-item {
   font-size: 0.9rem;
   color: #8b949e;

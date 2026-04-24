@@ -1116,6 +1116,22 @@ El ciclo de pobreza, educación truncada y empleo precario **se rompió cuatro v
 
 ::::{.sources-section}
 
+<h2 class="data-about-title">Sobre los datos</h2>
+
+Este tablero se construye sobre siete datasets oficiales, todos de acceso público, todos con año explícito y cobertura declarada. Reconocemos explícitamente las limitaciones de cada uno.
+
+| Dataset | Fuente | Año | Cobertura | Limitación reconocida |
+|---|---|---|---|---|
+| Pobreza multidimensional por entidad | CONEVAL | 2010 · 2015 · 2020 | 32 estados (n = 32) | Subregistro conocido en comunidades indígenas; medición bianual no captura shocks intra-año |
+| Pobreza extrema y rezago educativo | CONEVAL, Concentrado estatal | 2020 | 32 estados | Mismo subregistro; rezago educativo definido sobre población ≥ 22 años |
+| Grado promedio de escolaridad | INEGI, Censo de Población y Vivienda | 2010 · 2015 · 2020 | 32 estados + nacional | Autoreporte del jefe de hogar; mide años cursados, no calidad educativa |
+| Ingreso medio por hora por ocupación | INEGI, ENOE | 2016–2024 | Nacional por tipo de ocupación y sexo | No captura ingresos del sector informal completo; trabajo doméstico no remunerado queda fuera |
+| Tasa de desocupación por edad y sexo | INEGI, ENOE | 1995–2020 | 32 estados + nacional | Datos 2020+ presentan colapsos por COVID-19; análisis limitado a 2005–2019 para aislar el shock |
+| Finalización Media Superior (56 de 100) | UNICEF, Country Office Annual Report | 2023 | Nacional | Agregado sin desagregación estatal |
+| Informalidad laboral (56%) | OCDE, Economic Survey México | 2026 | Nacional (agregado) | Sin desagregación por género ni región |
+
+Todos los archivos fuente se encuentran en `datos/ods1/`, `datos/ods4/` y `datos/ods8/`, y el pipeline de carga es reproducible con `uv run quarto render dashboard/index.qmd`.
+
 ### Fuentes
 
 :::{.source-item}
