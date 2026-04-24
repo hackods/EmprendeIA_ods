@@ -25,3 +25,8 @@ screenshot-*.png
 dashboard/scatter3d.html
 dashboard/map_home.html
 dashboard/*.png
+dashboard/index.html
+dashboard/index_files/
+
+/.quarto/
+**/*.quarto_ipynb

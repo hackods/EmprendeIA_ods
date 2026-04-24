@@ -80,20 +80,25 @@ Elegimos la ENOE y el CONEVAL porque son las **únicas fuentes estadísticamente
 ## Estructura del repositorio
 ```
 EmprendeIA_ods/
+├── _quarto.yml              ← Config del proyecto Quarto
+├── dashboard/
+│   ├── index.qmd            ← Código fuente del tablero
+│   └── landing.scss         ← Estilos del tablero
+├── docs/                    ← Salida renderizada (GitHub Pages)
+│   ├── index.html
+│   └── index_files/
 ├── datos/
-│   ├── geo/         ← GeoJSON de estados de México
-│   ├── ods1/        ← Datos CONEVAL de pobreza multidimensional
-│   ├── ods4/        ← Datos SEP/INEGI de educación
-│   └── ods8/        ← Datos INEGI ENOE de empleo e informalidad
-├── scripts/         ← Scripts de limpieza y procesamiento
-├── dashboard/       ← Tablero renderizado (HTML)
-├── notebooks/       ← Notebook exploratorio
-├── Tablero_ods_EmprendeIA.qmd  ← Código fuente del tablero
-├── images/          ← Imágenes generadas con IA (fondos de sección)
-├── landing.scss     ← Estilos del tablero
-├── requirements.txt ← Dependencias de Python
-├── License.txt      ← CC BY-SA 4.0
-├── ai-log.md        ← Declaratoria de uso de IA (formato HackODS)
+│   ├── geo/                 ← GeoJSON de estados de México
+│   ├── ods1/                ← Datos CONEVAL de pobreza multidimensional
+│   ├── ods4/                ← Datos SEP/INEGI de educación
+│   └── ods8/                ← Datos INEGI ENOE de empleo e informalidad
+├── images/                  ← Imágenes generadas con IA (fondos de sección)
+├── scripts/                 ← Scripts de limpieza + post_render.py
+├── notebooks/               ← Notebook exploratorio
+├── pyproject.toml           ← Dependencias (gestor: uv)
+├── uv.lock                  ← Lock file reproducible
+├── LICENSE                  ← CC BY-SA 4.0
+├── ai-log.md                ← Declaratoria de uso de IA (formato HackODS)
 └── README.md
 ```
 
@@ -150,22 +155,19 @@ EmprendeIA_ods/
 
 ## Cómo ejecutar el tablero
 
-El tablero interactivo ya está renderizado en `dashboard/`. Para abrirlo directamente:
+El tablero renderizado vive en `docs/index.html` y es lo que sirve GitHub Pages.
+
+### Renderizado desde la fuente (reproducible con `uv`)
 
 ```bash
-# Abrir el tablero renderizado (no requiere instalación)
-open dashboard/Tablero_ods_EmprendeIA.html
+# 1. Instalar uv si no lo tienes: https://docs.astral.sh/uv/getting-started/installation/
+# 2. Instalar Quarto CLI:          https://quarto.org/docs/get-started/
+# 3. Desde la raíz del repositorio:
+uv sync                                   # crea .venv y sincroniza dependencias
+uv run quarto render dashboard/index.qmd  # renderiza a docs/index.html
 ```
 
-Para renderizar desde la fuente:
+**Requisitos:** Python ≥ 3.13 · Quarto CLI ≥ 1.4 · `uv` (gestor de paquetes)
 
-```bash
-# 1. Instalar dependencias de Python
-pip install -r requirements.txt
-
-# 2. Instalar Quarto CLI (https://quarto.org/docs/get-started/)
-# 3. Renderizar
-quarto render Tablero_ods_EmprendeIA.qmd
-```
-
-**Requisitos:** Python >= 3.10 · Quarto CLI · Dependencias en `requirements.txt`
+El `post_render` automático aplana la salida para cumplir con la estructura
+esperada por la rúbrica HackODS (`dashboard/index.qmd` → `docs/index.html`).
