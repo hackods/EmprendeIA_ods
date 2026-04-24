@@ -637,7 +637,7 @@ print('<div class="stat-desc">Estados que rompieron el ciclo entre 2010 y 2020</
 :::
 
 :::{.section-quote .fade-in .d3}
-"Luis no fracasó. Tampoco está condenado. El sistema se puede rediseñar — y cuatro estados ya lo están demostrando."
+La promesa se rompe en cada eslabón.
 :::
 
 :::
@@ -750,7 +750,7 @@ La prepa cuesta. No la colegiatura — cuesta el **tiempo**. Cuesta las 4 horas 
 
 Un día, Luis deja de ir. No es que no le guste estudiar. Es que **su familia necesita que deje de hacerlo.**
 
-Pero el puente no se rompe para todos. La pregunta no es por qué algunos caen. Es **por qué algunos no.**
+**Luis no abandonó la escuela. La escuela nunca le llegó tan lejos.** La pregunta no es por qué algunos caen — es **por qué algunos no.**
 :::
 
 :::{.slide-right .d3}
@@ -807,6 +807,14 @@ print(f'<span class="corr-r">r ≈ −0.8</span>')
 print('<span class="corr-desc">A mayor pobreza extrema, menor escolaridad promedio — 32 estados, p < 10⁻⁷</span>')
 ```
 
+:::
+
+:::{.section-body .fade-in .d2 style="margin-top:2rem; max-width:700px;"}
+Y aquí lo contraintuitivo: **en México, la educación no saca de la pobreza. Es al revés — bajar la pobreza produce educación.**
+
+Lo probamos con la métrica estándar. La **tasa de abandono escolar** — lo que reporta la SEP cada año — **no correlaciona con pobreza**: r = −0.15, estadísticamente nulo. En cambio, la pobreza extrema **sí predice los años de escolaridad**, con r ≈ −0.8.
+
+Estamos midiendo lo que no importa. El indicador correcto ya estaba en los datos — solo había que mirarlo.
 :::
 
 :::{.section-body .fade-in .d3 style="margin-top:1.5rem; max-width:700px;"}
@@ -1114,7 +1122,9 @@ Lo que se mide, se mueve.
 :::
 
 :::{.section-body .fade-in .d2 style="max-width:720px; margin:0 auto 3rem;"}
-La correlación pobreza extrema × escolaridad (**r ≈ −0.8**) es una palanca de dos sentidos. Si la pobreza sube, la escolaridad cae. Si **baja, la escolaridad sube**. Zacatecas, Chihuahua, Querétaro e Hidalgo lo probaron en una década. No fue milagro — fue presupuesto dirigido, política coordinada, y medición honesta.
+La correlación pobreza extrema × escolaridad (**r ≈ −0.8**) es una palanca de dos sentidos. Si la pobreza sube, la escolaridad cae. Si **baja, la escolaridad sube**. Zacatecas, Chihuahua, Querétaro e Hidalgo lo probaron en una década.
+
+**No fue milagro. Lo midieron, lo planearon, lo presupuestaron.**
 :::
 
 :::{.cta-grid .fade-in .d2}
@@ -1138,6 +1148,13 @@ La correlación pobreza extrema × escolaridad (**r ≈ −0.8**) es una palanca
 <div class="cta-who">Si eres ciudadano</div>
 <div class="cta-what">Cuando evalúes a tu gobernador, mira un solo número: años de escolaridad ganados en una década.</div>
 <div class="cta-evidence">Evidencia: los 32 estados ganaron escolaridad 2010–2020 — pero a velocidades muy distintas.</div>
+:::
+
+:::{.cta-card .cta-emprendeia}
+<div class="cta-icon">🚀</div>
+<div class="cta-who">Y nosotros, en EmprendeIA</div>
+<div class="cta-what">Trabajamos en ese eslabón: apoyamos emprendimientos y empleo digno en México.</div>
+<div class="cta-evidence">Porque el presupuesto que rompe el ciclo, al final, es el salario de un trabajo decente.</div>
 :::
 
 :::
