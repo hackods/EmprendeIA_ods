@@ -312,9 +312,9 @@ for _, rr in df_gender.iterrows():
 fig_gender.add_trace(go.Scatter(
     x=df_gender['mujeres'], y=df_gender['ocupacion'],
     mode='markers+text', name='Mujeres',
-    marker=dict(size=14, color='#ec4899', line=dict(width=1.5, color='white')),
+    marker=dict(size=14, color='#22d3ee', line=dict(width=1.5, color='white')),
     text=[f'${v:.0f}' for v in df_gender['mujeres']],
-    textposition='middle left', textfont=dict(size=11, color='#ec4899'),
+    textposition='middle left', textfont=dict(size=11, color='#22d3ee'),
     hovertemplate='<b>%{y}</b><br>Mujeres: $%{x:.2f}/hr<extra></extra>',
 ))
 fig_gender.add_trace(go.Scatter(
