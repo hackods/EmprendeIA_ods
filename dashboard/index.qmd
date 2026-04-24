@@ -696,7 +696,7 @@ dict(icon="stars", color="success", value=f"{len(heroes)}")
 dict(icon="lightning-charge", color="success", value="−16 pp")
 ```
 
-## Row {height="36%"}
+## Row {height="34%"}
 
 ```{python}
 #| title: "Escolaridad promedio por entidad 2010 → 2020 (INEGI Censo)"
@@ -708,7 +708,13 @@ fig_slope
 fig_deltas
 ```
 
-## Row {height="24%" .cta-row}
+## Row {height="10%" .palanca-bridge-row}
+
+::: {.card .palanca-bridge}
+**Cuatro estados lo demostraron.** Lo midieron, lo planearon, lo presupuestaron.
+:::
+
+## Row {height="20%" .cta-row}
 
 ::: {.card title="🏛️ Política pública"}
 Atacar **pobreza extrema** mueve la escolaridad más que cualquier beca aislada.
@@ -734,7 +740,7 @@ Trabajamos en ese eslabón: emprendimientos y **empleo digno**.
 *Porque el presupuesto que rompe el ciclo, al final, es el salario de un trabajo decente.*
 :::
 
-## Row {height="18%" .cierre-row}
+## Row {height="14%" .cierre-row}
 
 ::: {.card .cierre-card}
 # No es milagro. {.text-center}

@@ -66,6 +66,43 @@ $secondary: #6e7681;   // Gris neutral
 }
 
 // ═══════════════════════════════════════════════════════
+// PALANCA BRIDGE · puente narrativo antes de los CTAs
+// "Cuatro estados lo demostraron. Lo midieron, lo planearon,
+//  lo presupuestaron." — echo del guion v8, Beat 3.
+// ═══════════════════════════════════════════════════════
+
+.palanca-bridge {
+  background: linear-gradient(90deg,
+               rgba(16, 185, 129, 0.08) 0%,
+               rgba(16, 185, 129, 0.02) 100%) !important;
+  border-left: 3px solid #10b981 !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+}
+
+.palanca-bridge .card-body {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0.8rem 1.5rem !important;
+}
+
+.palanca-bridge p {
+  font-size: 1.05rem;
+  font-weight: 500;
+  text-align: center;
+  margin: 0;
+  letter-spacing: -0.005em;
+  color: #f0f6fc;
+}
+
+.palanca-bridge strong {
+  color: #10b981;
+  font-weight: 700;
+}
+
+// ═══════════════════════════════════════════════════════
 // CIERRE · el momento visual del pitch
 // "No es milagro. Es presupuesto."
 // ═══════════════════════════════════════════════════════
