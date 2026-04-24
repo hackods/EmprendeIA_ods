@@ -267,7 +267,7 @@ $card-border-color: #e5e7eb;
 // ═══════════════════════════════════════════════════════
 
 .navbar-nav::after {
-  content: "01 / 05";
+  content: "01 / 06";
   position: absolute;
   right: 1.5rem;
   top: 50%;
@@ -284,11 +284,12 @@ $card-border-color: #e5e7eb;
   pointer-events: none;
 }
 
-.navbar-nav:has(.nav-item:nth-child(1) .nav-link.active)::after { content: "01 / 05"; }
-.navbar-nav:has(.nav-item:nth-child(2) .nav-link.active)::after { content: "02 / 05"; }
-.navbar-nav:has(.nav-item:nth-child(3) .nav-link.active)::after { content: "03 / 05"; }
-.navbar-nav:has(.nav-item:nth-child(4) .nav-link.active)::after { content: "04 / 05"; }
-.navbar-nav:has(.nav-item:nth-child(5) .nav-link.active)::after { content: "05 / 05"; }
+.navbar-nav:has(.nav-item:nth-child(1) .nav-link.active)::after { content: "01 / 06"; }
+.navbar-nav:has(.nav-item:nth-child(2) .nav-link.active)::after { content: "02 / 06"; }
+.navbar-nav:has(.nav-item:nth-child(3) .nav-link.active)::after { content: "03 / 06"; }
+.navbar-nav:has(.nav-item:nth-child(4) .nav-link.active)::after { content: "04 / 06"; }
+.navbar-nav:has(.nav-item:nth-child(5) .nav-link.active)::after { content: "05 / 06"; }
+.navbar-nav:has(.nav-item:nth-child(6) .nav-link.active)::after { content: "06 / 06"; }
 
 // ═══════════════════════════════════════════════════════
 // HINT de navegación por teclado (estático, no invasivo)
@@ -317,4 +318,165 @@ $card-border-color: #e5e7eb;
   .navbar-brand-container::after {
     display: none;
   }
+}
+
+// ═══════════════════════════════════════════════════════
+// 🎬 TAB PRESENTACIÓN · el lienzo único del pitch
+// Los colores cuentan el arco: rojo PROBLEMA → ámbar
+// REVELACIÓN → verde SOLUCIÓN → azul CIERRE.
+// ═══════════════════════════════════════════════════════
+
+// Cada card narrativa recibe una "banda" de color a la izquierda
+// y un fondo en gradient horizontal desde ese color → transparente.
+
+// ─── PROBLEMA · rojo ─────────────────────────────────────
+.problema-card {
+  background: linear-gradient(90deg,
+               rgba(229, 36, 59, 0.10) 0%,
+               rgba(229, 36, 59, 0.015) 65%,
+               transparent 100%) !important;
+  border: none !important;
+  border-left: 4px solid #e5243b !important;
+}
+.problema-card .card-header {
+  background: transparent !important;
+  color: #991b1b !important;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  border-bottom-color: rgba(229, 36, 59, 0.15) !important;
+}
+.problema-card .card-body {
+  padding: 1.1rem 1.3rem !important;
+}
+.problema-card p {
+  font-size: 1.02rem;
+  line-height: 1.55;
+  color: #1f2937;
+}
+.problema-card strong {
+  color: #991b1b;
+}
+.problema-card em {
+  color: #4b5563;
+}
+
+// ─── TRANSICIÓN hacia REVELACIÓN ─────────────────────────
+.beat-transition {
+  background: linear-gradient(90deg,
+               rgba(229, 36, 59, 0.04) 0%,
+               rgba(245, 158, 11, 0.08) 50%,
+               rgba(245, 158, 11, 0.02) 100%) !important;
+  border: none !important;
+  border-top: 1px dashed rgba(229, 36, 59, 0.2) !important;
+  border-bottom: 1px dashed rgba(245, 158, 11, 0.3) !important;
+}
+.beat-transition .card-body {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 1rem 2rem !important;
+  text-align: center;
+}
+.beat-transition p {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #6b7280;
+  font-style: italic;
+  margin: 0;
+}
+.beat-transition strong {
+  color: #111827;
+  font-style: normal;
+}
+
+// ─── REVELACIÓN · ámbar ──────────────────────────────────
+.revelacion-anchor {
+  background: radial-gradient(ellipse at center,
+               rgba(245, 158, 11, 0.14) 0%,
+               rgba(245, 158, 11, 0.03) 60%,
+               transparent 100%) !important;
+  border: 1px solid rgba(245, 158, 11, 0.25) !important;
+  border-left: 4px solid #f59e0b !important;
+}
+.revelacion-anchor .card-body {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center;
+  padding: 1.3rem 1.5rem !important;
+}
+.revelacion-anchor h1,
+.revelacion-anchor .h4 {
+  font-size: clamp(1.1rem, 1.8vw, 1.6rem) !important;
+  font-weight: 700 !important;
+  margin: 0.25rem 0 !important;
+  line-height: 1.2 !important;
+  letter-spacing: -0.01em !important;
+  color: #111827 !important;
+}
+.revelacion-anchor .accent-amber {
+  color: #b45309 !important;
+}
+
+.revelacion-quote {
+  background: rgba(245, 158, 11, 0.05) !important;
+  border: none !important;
+  border-left: 3px solid #f59e0b !important;
+}
+.revelacion-quote .card-body {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 0.9rem 1.5rem !important;
+  text-align: center;
+}
+.revelacion-quote p {
+  font-size: 1.08rem;
+  color: #374151;
+  font-style: italic;
+  margin: 0;
+  line-height: 1.4;
+}
+.revelacion-quote strong {
+  color: #b45309;
+  font-style: normal;
+}
+
+// ─── SOLUCIÓN · verde ────────────────────────────────────
+// Reusamos .palanca-bridge (ya tiene border-left verde)
+// pero añadimos un modifier .solucion-bridge para el contexto
+// del tab Presentación.
+.solucion-bridge {
+  background: linear-gradient(90deg,
+               rgba(16, 185, 129, 0.16) 0%,
+               rgba(16, 185, 129, 0.02) 100%) !important;
+}
+.solucion-bridge p {
+  font-size: 1.08rem;
+  color: #111827;
+}
+.solucion-bridge strong {
+  color: #047857;
+  font-weight: 700;
+}
+
+// ─── CIERRE · hero azul ──────────────────────────────────
+// Refuerzo del .cierre-card cuando está en tab Presentación
+.cierre-hero {
+  background: linear-gradient(135deg,
+               #dbeafe 0%,
+               #ffffff 35%,
+               #d1fae5 100%) !important;
+  border: 1px solid rgba(59, 130, 246, 0.22) !important;
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.08);
+}
+.cierre-hero .card-body {
+  padding: 1.5rem !important;
+}
+.cierre-hero h1,
+.cierre-hero .h4 {
+  font-size: clamp(2rem, 4.5vw, 3.6rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.03em !important;
 }

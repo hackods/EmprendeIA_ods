@@ -513,6 +513,140 @@ for h in heroes:
 ```
 
 
+# 🎬 Presentación {scrolling="true" orientation="rows"}
+
+## Row {height="140"}
+
+```{python}
+#| content: valuebox
+#| title: "ODS 1 · Pobreza en Chiapas"
+dict(icon="house-exclamation", color="danger", value=f"{pob_chiapas:.0f}%")
+```
+
+```{python}
+#| content: valuebox
+#| title: "ODS 4 · Rezago educativo nacional"
+dict(icon="mortarboard", color="warning", value="25.1 M")
+```
+
+```{python}
+#| content: valuebox
+#| title: "ODS 8 · Piso salarial"
+dict(icon="currency-exchange", color="primary", value=f"${sal_elem:.0f}/hr")
+```
+
+```{python}
+#| content: valuebox
+#| title: "ODS 8 · Techo salarial (directivos)"
+dict(icon="briefcase", color="secondary", value=f"${sal_dir:.0f}/hr")
+```
+
+## Row {height="200"}
+
+::: {.card .problema-card title="La historia de Luis"}
+**Luis tiene 18 años.** Nació en Chiapas, terminó la secundaria, y necesita trabajar.
+
+Su mamá le dijo lo que todos en México hemos escuchado: *"estudia, para que no termines pobre."*
+
+Pero los datos cuentan otra historia. **7 de cada 10 paisanos de Luis viven en pobreza** (ODS 1). El país acumula **25.1 millones con rezago educativo** (ODS 4). Y el mercado laboral le tiene reservado un piso: **$40 por hora** en ocupaciones elementales, contra **$117** para un directivo (ODS 8).
+
+**La promesa se rompe en cada eslabón.**
+:::
+
+## Row {height="420"}
+
+```{python}
+#| title: "Pobreza multidimensional por entidad federativa · CONEVAL 2020"
+fig_map
+```
+
+## Row {height="100"}
+
+::: {.card .beat-transition .to-revelacion}
+Pero cuando cruzamos los 32 estados con CONEVAL e INEGI Censo 2020, **encontramos algo contraintuitivo.**
+:::
+
+## Row {height="140"}
+
+```{python}
+#| content: valuebox
+#| title: "Tasa de abandono escolar × pobreza"
+dict(icon="x-circle", color="secondary", value="r = −0.15")
+```
+
+```{python}
+#| content: valuebox
+#| title: "Pobreza extrema × escolaridad"
+dict(icon="check-circle", color="warning", value="r ≈ −0.8")
+```
+
+```{python}
+#| content: valuebox
+#| title: "Brecha Chiapas vs Nuevo León"
+dict(icon="rulers", color="warning", value=f"{brecha_anos:.2f} años")
+```
+
+## Row {height="440"}
+
+```{python}
+#| title: "Pobreza extrema × escolaridad promedio · 32 estados (p < 10⁻⁷)"
+fig_scatter
+```
+
+## Row {height="130"}
+
+::: {.card .revelacion-anchor}
+# En México, la educación no saca de la pobreza.
+# Es al revés — bajar la pobreza produce educación. {.accent-amber}
+:::
+
+## Row {height="90"}
+
+::: {.card .revelacion-quote}
+*"Luis no abandonó la escuela. **La escuela nunca le llegó tan lejos.**"*
+:::
+
+## Row {height="140"}
+
+```{python}
+#| content: valuebox
+#| title: "Estados que ganaron escolaridad 2010–2020"
+dict(icon="trophy", color="success", value=f"{n_esc_up} / 32")
+```
+
+```{python}
+#| content: valuebox
+#| title: "Estados que rompieron el ciclo"
+dict(icon="stars", color="success", value=f"{len(heroes)}")
+```
+
+```{python}
+#| content: valuebox
+#| title: "Reducción pobreza · Zacatecas"
+dict(icon="lightning-charge", color="success", value="−16 pp")
+```
+
+## Row {height="420"}
+
+```{python}
+#| title: "Escolaridad 2010 → 2020 · los 4 que saltaron"
+fig_slope
+```
+
+## Row {height="110"}
+
+::: {.card .palanca-bridge .solucion-bridge}
+**Cuatro estados lo demostraron.** Lo midieron, lo planearon, lo presupuestaron.
+:::
+
+## Row {height="260"}
+
+::: {.card .cierre-card .cierre-hero}
+# No es milagro.
+# Es presupuesto. {.accent}
+:::
+
+
 # 🔴 Problema
 
 ## Row {height="22%"}
